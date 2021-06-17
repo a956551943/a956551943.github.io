@@ -17,8 +17,8 @@
 <meta property="og:site_name" content="Hanyu bolg">
 <meta property="og:description" content="此篇着重讲述如何使用hexo进行个人博客编写上传…没有搭建好环境的童鞋请移动至此 —– Hexo建站总结—个人博客建站基础篇 继上篇开始~: 基础篇搭建完成后的小伙伴肯定有在为如何让自己的博客长久的在服务器上运行而头疼,现在在这里先介绍如何让自己的hexo博客在服务器后台运行~ 1.用pm2管理进程让 hexo 博客在服务器后台跑起来1,安装pm2 1npm install -g pm2  2,编">
 <meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2021-06-17T03:40:07.020Z">
-<meta property="article:modified_time" content="2021-06-17T03:40:07.020Z">
+<meta property="article:published_time" content="2021-06-17T07:34:47.132Z">
+<meta property="article:modified_time" content="2021-06-17T07:34:47.132Z">
 <meta property="article:author" content="Han yu">
 <meta property="article:tag" content="Hexo">
 <meta name="twitter:card" content="summary">
@@ -242,7 +242,7 @@
         </span>
 
 <a href="/2021/06/17/%E8%AE%B0%20---%20%E5%85%B3%E4%BA%8E%E8%BF%91%E6%AE%B5%E6%97%B6%E9%97%B4%E5%AD%A6%E4%B9%A0%E7%9A%84%E6%80%BB%E7%BB%93(Hexo%E5%BB%BA%E7%AB%99%20--%20%E8%BF%9B%E9%98%B6%E7%AF%87-%E4%B8%AA%E6%80%A7%E5%8C%96%E9%85%8D%E7%BD%AE)/" class="archive-article-date">
-        <time datetime="2021-06-17T03:40:07.020Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-06-17</time>
+        <time datetime="2021-06-17T07:34:47.132Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-06-17</time>
 </a>
 
   
@@ -282,7 +282,7 @@
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install -g pm2</span><br></pre></td></tr></table></figure>
 
 <p><strong>2,编写一个执行脚本 —— 在博客根目录下创建一个文件 run.js</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">cd /usr/local/src/myblog</span><br><span class="line"></span><br><span class="line">vim run.js</span><br><span class="line"></span><br><span class="line">##添加如下内容:</span><br><span class="line">const &#123; exec &#125; = require(&#x27;child_process&#x27;)</span><br><span class="line">exec(&#x27;hexo server&#x27;,(error, stdout, stderr) =&gt; &#123;</span><br><span class="line">if(error)&#123;</span><br><span class="line">        console.log(&#x27;exec error: $&#123;error&#125;&#x27;)</span><br><span class="line">        return</span><br><span class="line">&#125;</span><br><span class="line">console.log(&#x27;stdout: $&#123;stdout&#125;&#x27;);</span><br><span class="line">console.log(&#x27;stderr: $&#123;stderr&#125;&#x27;);</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">cd /usr/local/src/myblog</span><br><span class="line"></span><br><span class="line">vim run.js</span><br><span class="line"></span><br><span class="line">##添加如下内容:</span><br><span class="line">const &#123; exec &#125; = require(&#x27;child_process&#x27;)</span><br><span class="line">exec(&#x27;hexo server -p 你的端口&#x27;,(error, stdout, stderr) =&gt; &#123;</span><br><span class="line">if(error)&#123;</span><br><span class="line">        console.log(&#x27;exec error: $&#123;error&#125;&#x27;)</span><br><span class="line">        return</span><br><span class="line">&#125;</span><br><span class="line">console.log(&#x27;stdout: $&#123;stdout&#125;&#x27;);</span><br><span class="line">console.log(&#x27;stderr: $&#123;stderr&#125;&#x27;);</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
 
 <p><strong>3,使用pm2运行脚本 run.js</strong></p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">cd /usr/local/src/myblog</span><br><span class="line">指令: pm2 start run.js</span><br><span class="line">运行起来后可以使用pm2 show + 进程pid查看后台hexo进行</span><br></pre></td></tr></table></figure>
