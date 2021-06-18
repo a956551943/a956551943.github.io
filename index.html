@@ -227,6 +227,146 @@
             
 
   
+    <article id="post-JVM---体系结构" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2021/06/18/JVM---%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/" target="_blank">Java---JVM体系结构</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2021/06/18/JVM---%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/" class="archive-article-date">
+        <time datetime="2021-06-18T07:44:42.613Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-06-18</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h5 id="Java特性：跨平台的语言-—-Write-once-run-anywhere-一次编译，到处运行"><a href="#Java特性：跨平台的语言-—-Write-once-run-anywhere-一次编译，到处运行" class="headerlink" title="Java特性：跨平台的语言 — Write once,run anywhere (一次编译，到处运行)."></a>Java特性：跨平台的语言 — Write once,run anywhere (一次编译，到处运行).</h5><p><img src="http://47.98.49.10/img/typora_img/image-20210617164657426.png"></p>
+<p>Java语言真实的执行流程是要经过两次编译,第一次是由java源文件即.java文件编译生成字节码.class文件，然后JVM识别这些.class文件对.class文件进行编译解释成机器语言被cpu执行，但是并不是完全加载所有的.class文件内容，这样会使JVM启动时间过长，这时候就出现了JIT即时编译器，他可以在JVM运行的过程中将.class字节码二次编译,将热点代码编译成机器语言缓存起来，方便下次使用.</p>
+<h5 id="JVM-跨语言的平台-—-支撑Java成为跨语言的平台的关键"><a href="#JVM-跨语言的平台-—-支撑Java成为跨语言的平台的关键" class="headerlink" title="JVM: 跨语言的平台 — 支撑Java成为跨语言的平台的关键."></a>JVM: 跨语言的平台 — 支撑Java成为跨语言的平台的关键.</h5><p><img src="http://47.98.49.10/img/typora_img/image-20210617170103185.png" alt="JVM跨语言"></p>
+<p>字节码文件真实的含义应该是 JVM字节码而不是java字节码，因为JVM的跨平台性，任何一门编程语言只要能够编译后生成的class文件符合JVM规范就可以被JVM虚拟机承载并且在JVM虚拟机中运行。</p>
+<p>在JDK11中垃圾回收器由G1变更为ZGC,在多方面测试中ZGC的性能都远超G1,未来趋势也在向这里发展.</p>
+<h5 id="Java发展的重大事件"><a href="#Java发展的重大事件" class="headerlink" title="Java发展的重大事件"></a>Java发展的重大事件</h5><p>2007年，Java平台迎来了新伙伴Clojure。</p>
+<p>2008年，Oracle收购了BEA，得到了JRockit虚拟机</p>
+<p>2009年，Twitter宣布把后台大部分应用从Ruby迁移到Scala，这是JVM的又一次大规模应用</p>
+<p>2010年，Oracle收购了sun，获得了商标和最具价值的HotSpot虚拟机，此时，Oracle拥有</p>
+<p>市场占有率最高的两款虚拟机HotSpot和JRockit,并计划在未来进行整合:HotRockit. 其实在JDK1.8</p>
+<p>就已经整合了，因为两款虚拟机架构原因无法完全整合，所以目前还是以HotSpot为主</p>
+<p>JCP组织管理：Java语言</p>
+<p>2011年，JDK7发布，在JDK1.7u4中正式启用的了新垃圾回收器G1</p>
+<p>2017年，JDK9发布，将G1设置为默认GC，代替CMS</p>
+<p>同年，IBM的J9 开源，形成了现在的J9社区</p>
+<p>2018年，Android的Java侵权案判决，Google赔偿Oracle88亿</p>
+<p>同年，Oracle宣布JavaEE成为历史，JDBC，JMS，Servlet赠予Eclipse基金会</p>
+<p>同年JDK11发布，这是继JDK8之后的又一个LTS，长久支持版本，发布革命性的ZGC，JDK授权许可调整</p>
+<p>2019年，JDK12发布，加入RedHat领导开发的Shenandoah GC</p>
+<h5 id="垃圾回收器的前景展望"><a href="#垃圾回收器的前景展望" class="headerlink" title="垃圾回收器的前景展望"></a>垃圾回收器的前景展望</h5><p>什么是CMS: </p>
+<p>CMS是现代高性能垃圾回收器的雏形，垃圾收集线程和应用线程并发执行。</p>
+<p>牺牲了系统的吞吐量来追求垃圾回收的速度，适合在追求垃圾回收速度的服务器上。</p>
+<p>G1的作用：</p>
+<p>G1垃圾回收算法主要应用在多CPU大内存的服务中，在满足高吞吐量的同时</p>
+<p>尽可能的减少垃圾回收时的暂停时间，该设计主要针对应用场景如下:</p>
+<p>1，垃圾收集线程和应用线程并发执行，与CMS相同。</p>
+<p>2，空闲内存压缩时避免冗长的暂停时间。</p>
+<p>3，应用需要更多可预测的GC暂停时间。</p>
+<p>4，不希望牺牲太多的吞吐性能。</p>
+<p>5，不需要很大的Java堆(不超过1G)。</p>
+<h5 id="JVM的位置"><a href="#JVM的位置" class="headerlink" title="JVM的位置"></a>JVM的位置</h5><p><img src="http://47.98.49.10/img/typora_img/image-20210618105102961.png" alt="JVM位置"></p>
+<p>JVM是运行在操作系统上的，它与硬件没有直接的交互</p>
+<h5 id="JVM的整体结构-以HotSpot-VM为例"><a href="#JVM的整体结构-以HotSpot-VM为例" class="headerlink" title="JVM的整体结构(以HotSpot VM为例)"></a>JVM的整体结构(以HotSpot VM为例)</h5><p>HotSpot VM是目前市面上高性能虚拟机的代表作之一</p>
+<p>它采用解释器与即时编译器并行的架构</p>
+<p><img src="http://47.98.49.10/img/typora_img/image-20210618141942070.png" alt="JVM结构图"></p>
+<p>上图解析可得 — class源文件由类加载子系统加载到内存中去，内存分为5个部分，分别是</p>
+<p>线程独占区 — 栈、本地方法栈(存放指向native方法的入口地址)、程序计数器(保存正在执行</p>
+<p>的JVM指令地址，保存下一条将要执行的指令地址)</p>
+<p>线程共享区 — 堆(存放对象所有new出来的对象都在这里)、方法区(存放静态方法、静态变量、class对象信息(构造方法、接口定义等))</p>
+<p>JDK1.8之后，堆，方法区合并为元数据区</p>
+<p>Java内存中的运行时数据区由执行引擎进行执行(解释器，JIT即时编译器，垃圾回收器),执行引擎还会调用native方法(由JNI提供的C/C++方法 直接与操作系统交互)</p>
+<p><img src="http://47.98.49.10/img/typora_img/image-20210618145029224.png" alt="Java执行流程"></p>
+<p>执行引擎主要做的事情是将操作系统无法识别的字节码指令翻译成可识别的机器指令，而在这里面JIT即时编译器所做的事情就是将字节码指令中的热点代码进行提前编译，并将编译后的机器指令进行缓存(放入方法区)提升程序性能。</p>
+<p>原先 执行引擎在执行解析字节码指令的时候是用到哪块字节码指令就用解释器直接进行机器指令翻译，然后再去操作系统执行。在有即时编译器的情况下，执行引擎在执行指令时，会从缓存中读取 热点代码的机器指令，不需要再用解释器进行字节码指令翻译。</p>
+
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">Java</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+	<div class="article-category tagcloud">
+		<i class="icon-book icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/Java//" class="article-tag-list-link color5">Java</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2021/06/18/JVM---%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-记 --- 关于近段时间学习的总结(Hexo建站 -- 进阶篇-个性化配置)" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -678,6 +818,10 @@ hexo deploy                            //部署文章，可以用hexo d缩写
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">Hexo</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">Java</a>
               </li>
             
             <div class="clearfix"></div>
