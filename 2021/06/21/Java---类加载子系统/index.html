@@ -6,28 +6,28 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="https://a956551943.github.io">
-  <title>Java---JVM体系结构 | Hanyu bolg</title>
+  <title>Java---类加载子系统 | Hanyu bolg</title>
   <meta name="generator" content="hexo-theme-yilia-plus">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   
-  <meta name="description" content="Java特性：跨平台的语言 — Write once,run anywhere (一次编译，到处运行). Java语言真实的执行流程是要经过两次编译,第一次是由java源文件即.java文件编译生成字节码.class文件，然后JVM识别这些.class文件对.class文件进行编译解释成机器语言被cpu执行，但是并不是完全加载所有的.class文件内容，这样会使JVM启动时间过长，这时候就出现了J">
+  <meta name="description" content="继上篇 — 回顾JVM整体架构模型 类加载器与加载过程 类加载器子系统负责从文件系统或网络中加载class文件，class文件在文件开头有特定的标识(Caffe Baby) ClassLoader只负责文件的加载，至于他是否可以运行，由执行引擎Exection Engine决定 加载的类信息存放在一块称为方法区的内存空间，除了类的信息外，方法区还会存放运行时常量池的信息，可能还包括字符串字面量和数">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Java---JVM体系结构">
-<meta property="og:url" content="https://a956551943.github.io/2021/06/18/Java---JVM%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/index.html">
+<meta property="og:title" content="Java---类加载子系统">
+<meta property="og:url" content="https://a956551943.github.io/2021/06/21/Java---%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%AD%90%E7%B3%BB%E7%BB%9F/index.html">
 <meta property="og:site_name" content="Hanyu bolg">
-<meta property="og:description" content="Java特性：跨平台的语言 — Write once,run anywhere (一次编译，到处运行). Java语言真实的执行流程是要经过两次编译,第一次是由java源文件即.java文件编译生成字节码.class文件，然后JVM识别这些.class文件对.class文件进行编译解释成机器语言被cpu执行，但是并不是完全加载所有的.class文件内容，这样会使JVM启动时间过长，这时候就出现了J">
+<meta property="og:description" content="继上篇 — 回顾JVM整体架构模型 类加载器与加载过程 类加载器子系统负责从文件系统或网络中加载class文件，class文件在文件开头有特定的标识(Caffe Baby) ClassLoader只负责文件的加载，至于他是否可以运行，由执行引擎Exection Engine决定 加载的类信息存放在一块称为方法区的内存空间，除了类的信息外，方法区还会存放运行时常量池的信息，可能还包括字符串字面量和数">
 <meta property="og:locale" content="en_US">
-<meta property="og:image" content="http://47.98.49.10/img/typora_img/image-20210617164657426.png">
-<meta property="og:image" content="http://47.98.49.10/img/typora_img/image-20210617170103185.png">
-<meta property="og:image" content="http://47.98.49.10/img/typora_img/image-20210618105102961.png">
-<meta property="og:image" content="http://47.98.49.10/img/typora_img/image-20210618141942070.png">
-<meta property="og:image" content="http://47.98.49.10/img/typora_img/image-20210618145029224.png">
-<meta property="article:published_time" content="2021-06-18T09:42:54.544Z">
-<meta property="article:modified_time" content="2021-06-18T09:42:54.544Z">
+<meta property="og:image" content="http://47.98.49.10/img/typora_img/image-20210621142143980.png">
+<meta property="og:image" content="http://47.98.49.10/img/typora_img/image-20210621143914031.png">
+<meta property="og:image" content="http://47.98.49.10/img/typora_img/image-20210621152452000.png">
+<meta property="og:image" content="http://47.98.49.10/img/typora_img/image-20210621153855666.png">
+<meta property="og:image" content="http://47.98.49.10/img/typora_img/image-20210621155041314.png">
+<meta property="article:published_time" content="2021-06-21T09:03:50.266Z">
+<meta property="article:modified_time" content="2021-06-21T09:03:50.266Z">
 <meta property="article:author" content="Han yu">
 <meta property="article:tag" content="Java">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://47.98.49.10/img/typora_img/image-20210617164657426.png">
+<meta name="twitter:image" content="http://47.98.49.10/img/typora_img/image-20210621142143980.png">
   
     <link rel="alternative" href="/atom.xml" title="Hanyu bolg" type="application/atom+xml">
   
@@ -228,14 +228,14 @@
               class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-Java---JVM体系结构" class="article article-type-post " itemscope itemprop="blogPost">
+            <article id="post-Java---类加载子系统" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
   
   
     <h1 class="article-title" itemprop="name">
-      Java---JVM体系结构
+      Java---类加载子系统
     </h1>
   
 
@@ -247,8 +247,8 @@
               <i class="icon-smile icon"></i> 阅读数：<span id="busuanzi_value_page_pv"></span>次
         </span>
 
-<a href="/2021/06/18/Java---JVM%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/" class="archive-article-date">
-        <time datetime="2021-06-18T09:42:54.544Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-06-18</time>
+<a href="/2021/06/21/Java---%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%AD%90%E7%B3%BB%E7%BB%9F/" class="archive-article-date">
+        <time datetime="2021-06-21T09:03:50.266Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-06-21</time>
 </a>
 
   
@@ -261,7 +261,7 @@
       <!-- 百度字体平台:http://fontstore.baidu.com/static/editor/index.html -->
       <i class="icon-statistics"></i>
       <span class="post-meta-item-text"> 字数统计:</span>
-      <span class="post-count">1.3k字</span>
+      <span class="post-count">1.7k字</span>
     </span>
   </span>
 
@@ -270,7 +270,7 @@
     <span class="post-meta-item-icon">
       <i class="icon-book icon"></i>
       <span class="post-meta-item-text"> 阅读时长≈</span>
-      <span class="post-count">4分</span>
+      <span class="post-count">6分</span>
     </span>
   </span>
 </div>
@@ -281,50 +281,84 @@
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h5 id="Java特性：跨平台的语言-—-Write-once-run-anywhere-一次编译，到处运行"><a href="#Java特性：跨平台的语言-—-Write-once-run-anywhere-一次编译，到处运行" class="headerlink" title="Java特性：跨平台的语言 — Write once,run anywhere (一次编译，到处运行)."></a>Java特性：跨平台的语言 — Write once,run anywhere (一次编译，到处运行).</h5><p><img src="http://47.98.49.10/img/typora_img/image-20210617164657426.png" alt="JVM跨平台"></p>
-<p>Java语言真实的执行流程是要经过两次编译,第一次是由java源文件即.java文件编译生成字节码.class文件，然后JVM识别这些.class文件对.class文件进行编译解释成机器语言被cpu执行，但是并不是完全加载所有的.class文件内容，这样会使JVM启动时间过长，这时候就出现了JIT即时编译器，他可以在JVM运行的过程中将.class字节码二次编译,将热点代码编译成机器语言缓存起来，方便下次使用.</p>
-<h5 id="JVM-跨语言的平台-—-支撑Java成为跨语言的平台的关键"><a href="#JVM-跨语言的平台-—-支撑Java成为跨语言的平台的关键" class="headerlink" title="JVM: 跨语言的平台 — 支撑Java成为跨语言的平台的关键."></a>JVM: 跨语言的平台 — 支撑Java成为跨语言的平台的关键.</h5><p><img src="http://47.98.49.10/img/typora_img/image-20210617170103185.png" alt="JVM跨语言"></p>
-<p>字节码文件真实的含义应该是 JVM字节码而不是java字节码，因为JVM的跨平台性，任何一门编程语言只要能够编译后生成的class文件符合JVM规范就可以被JVM虚拟机承载并且在JVM虚拟机中运行。</p>
-<p>在JDK11中垃圾回收器由G1变更为ZGC,在多方面测试中ZGC的性能都远超G1,未来趋势也在向这里发展.</p>
-<h5 id="Java发展的重大事件"><a href="#Java发展的重大事件" class="headerlink" title="Java发展的重大事件"></a>Java发展的重大事件</h5><p>2007年，Java平台迎来了新伙伴Clojure。</p>
-<p>2008年，Oracle收购了BEA，得到了JRockit虚拟机</p>
-<p>2009年，Twitter宣布把后台大部分应用从Ruby迁移到Scala，这是JVM的又一次大规模应用</p>
-<p>2010年，Oracle收购了sun，获得了商标和最具价值的HotSpot虚拟机，此时，Oracle拥有</p>
-<p>市场占有率最高的两款虚拟机HotSpot和JRockit,并计划在未来进行整合:HotRockit. 其实在JDK1.8</p>
-<p>就已经整合了，因为两款虚拟机架构原因无法完全整合，所以目前还是以HotSpot为主</p>
-<p>JCP组织管理：Java语言</p>
-<p>2011年，JDK7发布，在JDK1.7u4中正式启用的了新垃圾回收器G1</p>
-<p>2017年，JDK9发布，将G1设置为默认GC，代替CMS</p>
-<p>同年，IBM的J9 开源，形成了现在的J9社区</p>
-<p>2018年，Android的Java侵权案判决，Google赔偿Oracle88亿</p>
-<p>同年，Oracle宣布JavaEE成为历史，JDBC，JMS，Servlet赠予Eclipse基金会</p>
-<p>同年JDK11发布，这是继JDK8之后的又一个LTS，长久支持版本，发布革命性的ZGC，JDK授权许可调整</p>
-<p>2019年，JDK12发布，加入RedHat领导开发的Shenandoah GC</p>
-<h5 id="垃圾回收器的前景展望"><a href="#垃圾回收器的前景展望" class="headerlink" title="垃圾回收器的前景展望"></a>垃圾回收器的前景展望</h5><p>什么是CMS: </p>
-<p>CMS是现代高性能垃圾回收器的雏形，垃圾收集线程和应用线程并发执行。</p>
-<p>牺牲了系统的吞吐量来追求垃圾回收的速度，适合在追求垃圾回收速度的服务器上。</p>
-<p>G1的作用：</p>
-<p>G1垃圾回收算法主要应用在多CPU大内存的服务中，在满足高吞吐量的同时</p>
-<p>尽可能的减少垃圾回收时的暂停时间，该设计主要针对应用场景如下:</p>
-<p>1，垃圾收集线程和应用线程并发执行，与CMS相同。</p>
-<p>2，空闲内存压缩时避免冗长的暂停时间。</p>
-<p>3，应用需要更多可预测的GC暂停时间。</p>
-<p>4，不希望牺牲太多的吞吐性能。</p>
-<p>5，不需要很大的Java堆(不超过1G)。</p>
-<h5 id="JVM的位置"><a href="#JVM的位置" class="headerlink" title="JVM的位置"></a>JVM的位置</h5><p><img src="http://47.98.49.10/img/typora_img/image-20210618105102961.png" alt="JVM位置"></p>
-<p>JVM是运行在操作系统上的，它与硬件没有直接的交互</p>
-<h5 id="JVM的整体结构-以HotSpot-VM为例"><a href="#JVM的整体结构-以HotSpot-VM为例" class="headerlink" title="JVM的整体结构(以HotSpot VM为例)"></a>JVM的整体结构(以HotSpot VM为例)</h5><p>HotSpot VM是目前市面上高性能虚拟机的代表作之一</p>
-<p>它采用解释器与即时编译器并行的架构</p>
-<p><img src="http://47.98.49.10/img/typora_img/image-20210618141942070.png" alt="JVM结构图"></p>
-<p>上图解析可得 — class源文件由类加载子系统加载到内存中去，内存分为5个部分，分别是</p>
-<p>线程独占区 — 栈、本地方法栈(存放指向native方法的入口地址)、程序计数器(保存正在执行</p>
-<p>的JVM指令地址，保存下一条将要执行的指令地址)</p>
-<p>线程共享区 — 堆(存放对象所有new出来的对象都在这里)、方法区(存放静态方法、静态变量、class对象信息(构造方法、接口定义等))</p>
-<p>JDK1.8之后，堆，方法区合并为元数据区</p>
-<p>Java内存中的运行时数据区由执行引擎进行执行(解释器，JIT即时编译器，垃圾回收器),执行引擎还会调用native方法(由JNI提供的C/C++方法 直接与操作系统交互)</p>
-<p><img src="http://47.98.49.10/img/typora_img/image-20210618145029224.png" alt="Java执行流程"></p>
-<p>执行引擎主要做的事情是将操作系统无法识别的字节码指令翻译成可识别的机器指令，而在这里面JIT即时编译器所做的事情就是将字节码指令中的热点代码进行提前编译，并将编译后的机器指令进行缓存(放入方法区)提升程序性能。</p>
-<p>原先 执行引擎在执行解析字节码指令的时候是用到哪块字节码指令就用解释器直接进行机器指令翻译，然后再去操作系统执行。在有即时编译器的情况下，执行引擎在执行指令时，会从缓存中读取 热点代码的机器指令，不需要再用解释器进行字节码指令翻译。</p>
+    <h5 id="继上篇-—-回顾JVM整体架构模型"><a href="#继上篇-—-回顾JVM整体架构模型" class="headerlink" title="继上篇 — 回顾JVM整体架构模型"></a>继上篇 — 回顾JVM整体架构模型</h5><p><img src="http://47.98.49.10/img/typora_img/image-20210621142143980.png" alt="image-20210621142143980"></p>
+<h5 id="类加载器与加载过程"><a href="#类加载器与加载过程" class="headerlink" title="类加载器与加载过程"></a>类加载器与加载过程</h5><p><img src="http://47.98.49.10/img/typora_img/image-20210621143914031.png" alt="类加载过程"></p>
+<p>类加载器子系统负责从文件系统或网络中加载class文件，class文件在文件开头有特定的标识(Caffe Baby)</p>
+<p>ClassLoader只负责文件的加载，至于他是否可以运行，由执行引擎Exection Engine决定</p>
+<p>加载的类信息存放在一块称为方法区的内存空间，除了类的信息外，方法区还会存放运行时常量池的信息，可能还包括字符串字面量和数字常量(这部分常量信息是Class文件中常量池部分的内存映射)</p>
+<h5 id="类加载器ClassLoader角色"><a href="#类加载器ClassLoader角色" class="headerlink" title="类加载器ClassLoader角色"></a>类加载器ClassLoader角色</h5><p><img src="http://47.98.49.10/img/typora_img/image-20210621152452000.png" alt="类加载器角色"></p>
+<ol>
+<li><p>class files 存在于本地硬盘上，可以理解为设计师画在纸上的模版，而最终这个模版在执行的时候是要加载到JVM中来的，再根据这个文件实例化出n个一模一样的实例</p>
+</li>
+<li><p>class files 被加载到JVM中，被称为DNA元数据模板，放在方法区</p>
+</li>
+<li><p>在.class文件-&gt;JVM-&gt;最终成为DNA元数据模板，此过程需要一个运输工具(类装载器ClassLoader)，扮演一个快递员的角色</p>
+</li>
+</ol>
+<h5 id="类加载过程-加载-链接-验证-准备-解析-初始化"><a href="#类加载过程-加载-链接-验证-准备-解析-初始化" class="headerlink" title="类加载过程: 加载-链接(验证-准备-解析)-初始化"></a>类加载过程: 加载-链接(验证-准备-解析)-初始化</h5><p><img src="http://47.98.49.10/img/typora_img/image-20210621153855666.png" alt="类加载过程"></p>
+<p>类加载流程图</p>
+<p><img src="http://47.98.49.10/img/typora_img/image-20210621155041314.png" alt="image-20210621155041314"></p>
+<h5 id="加载："><a href="#加载：" class="headerlink" title="加载："></a>加载：</h5><ol>
+<li>通过一个类的全限定名获取定义此类的二进制字节流</li>
+<li>将这个字节流所代表的静态存储结构转化为方法区的运行时数据结构</li>
+<li>在内存中生成一个代表这个类的java.lang.Class对象，作为方法区这个类的各种数据的访问入口</li>
+</ol>
+<p>补充: 加载.class文件的方式</p>
+<ol>
+<li>从本地系统中直接加载</li>
+<li>从网络中获取，典型场景：Web Applet</li>
+<li>从zip压缩包中读取，成为日后jar、war格式的基础</li>
+<li>运行时计算生成，使用最多的是：动态代理技术</li>
+<li>由其他文件生成：JSP应用</li>
+<li>从专有数据库中提取.class文件，比较少见</li>
+<li>从加密文件中获取，典型的防class文件被反编译的保护措施</li>
+</ol>
+<h5 id="链接："><a href="#链接：" class="headerlink" title="链接："></a>链接：</h5><p>​    验证(Verify)：</p>
+<p>​    目的在于Class文件的字节流中包含的信息符合当前虚拟机的要求，保证被加载类的正确性，不会危害虚拟机自身安全。</p>
+<p>​    主要包括四种验证，文件格式验证、元数据验证、字节码验证、符号引用验证</p>
+<p>​    准备(Prepare):</p>
+<p>​    为类变量分配内存并且设置该类变量的默认初始值，即零值</p>
+<p>​    这里不包含用final修饰的static，因为final在编译成为字节码文件的时候就已经分配了，在准备阶段会显式初始化</p>
+<p>​    这里不会为实例变量分配初始化，类变量会分配到方法区中，而实例变量是会随着对象分配到Java堆中</p>
+<p>​    解析(Resolve):</p>
+<p>​    将常量池内的符号引用转换为直接引用的过程</p>
+<p>​    事实上解析操作一般都会在JVM初始化完成后再执行</p>
+<p>​    在Java源代码转换为class文件的过程中，Java源代码并不知道使用的常量或者引用到的其他类信息究竟是在内存中的哪个位置，所以在    一开始的时候用一组符号来表示引用的类型，等到该类型在内存中创建完毕，则会将指向常量池中的这些符号引用转换为直接引用</p>
+<h5 id="初始化"><a href="#初始化" class="headerlink" title="初始化:"></a>初始化:</h5><ol>
+<li>初始化阶段就是执行类构造器方法<clinit>()的过程</clinit></li>
+<li>此方法不需要定义，是javac编译器自动收集类中的所有类变量的赋值动作和静态代码块中的语句合并而来</li>
+<li>构造器方法中的指令按语句在源文件中出现的顺序执行</li>
+<li><clinit>()不同于类的构造器(构造器是虚拟机视角下的<init>())</init></clinit></li>
+<li>若该类具有父类,JVM会保证子类的<clinit>()执行之前，父类的<clinit>()已经执行完毕</clinit></clinit></li>
+<li>虚拟机必须保证一个类的<clinit>()方法在多线程下被加锁，即保证同一个类的clinit方法只被执行一次</clinit></li>
+</ol>
+<h5 id="类加载器类型"><a href="#类加载器类型" class="headerlink" title="类加载器类型:"></a>类加载器类型:</h5><p>JVM支持两种类型的类加载器，分别为引导类加载器(Bootstrap Classloader)和自定义类加载器(User-Defined Classloader)</p>
+<p>从概念上来讲，自定义类加载一般指的是程序中由开发人员自定义的一类类加载器，但是Java虚拟机规范却没有这么定义，而是将所有派生于抽象类ClassLoader的类加载器都划分为自定义类加载器</p>
+<p>无论类加载器如何划分，在程序中我们常见的三种类加载器为：引导类加载器、扩展类加载器、系统类加载器</p>
+<p>在JDK9以后，扩展类加载器ExtClassloader替换为平台类加载器PlatformClassloader,可能的目的是因为目前*.jar都放在ext目录下执行不安全？所以JDK1.9直接废除了这种做法？提供平台类加载器，为了保持和系统类加载器与应用类加载器之间的平衡？</p>
+<h5 id="虚拟机自带的类加载器"><a href="#虚拟机自带的类加载器" class="headerlink" title="虚拟机自带的类加载器"></a>虚拟机自带的类加载器</h5><p>启动类加载器:</p>
+<p>​    由C/C++实现嵌套在JVM内部</p>
+<p>​    用来加载核心类库(JAVA_HOME/jre/lib/rt.jar、resource.jar或sun.boot.class.path下的内容)，用于提供JVM自身需要的类</p>
+<p>​    没有父加载器，是扩展类加载和应用程序类加载器的父类</p>
+<p>​    出于安全考虑，Bootstrap启动类加载器只加载java、javax、sun等开头的类</p>
+<p>扩展类加载器:</p>
+<p>​    Java语言编写，由sun.misc.Launcher$ExtClassloader实现</p>
+<p>​    派生于Classloader类</p>
+<p>​    父加载器为启动类加载器</p>
+<p>​    从java.ext.dirs系统属性所制定的目录中加载类库，或从JDK安装目录的jre/lib/ext子目录下加载类库.如果用户创建的jar放在此目录下，    也会自动由扩展类加载器加载。</p>
+<p>应用程序类加载器:</p>
+<p>​    Java语言编写，由sun.misc.Launcher$ExtClassloader实现</p>
+<p>​    派生于Classloader类</p>
+<p>​    父加载器为扩展类加载器</p>
+<p>​    负责加载环境变量classpath或系统属性java.class.path指定路径下的类库</p>
+<p>​    该类加载器是程序中默认的类加载器，一般，Java应用的类(自己写的源代码)都是由它来加载</p>
+<p>​    通过CLassLoader.getSystemClassLoader()方法可获取到该类加载器</p>
+<h5 id="为什么要自定义类加载器"><a href="#为什么要自定义类加载器" class="headerlink" title="为什么要自定义类加载器?"></a>为什么要自定义类加载器?</h5><ol>
+<li>隔离类加载器，防止其他中间件模块的核心类库与当前业务模块引用包冲突 避免类冲突</li>
+<li>修改类的加载方式</li>
+<li>扩展加载源，从数据库中加载类、网络io中加载类等</li>
+<li>防止源码泄漏，对字节码文件进行加密，在类加载过程中进行解密</li>
+</ol>
 
     
 
@@ -371,7 +405,7 @@
         </li>
         <li>
           <strong>本文链接：</strong>
-          <a href="https://a956551943.github.io/2021/06/18/Java---JVM体系结构/" title="Java---JVM体系结构" target="_blank">https://a956551943.github.io/2021/06/18/Java---JVM体系结构/</a>
+          <a href="https://a956551943.github.io/2021/06/21/Java---类加载子系统/" title="Java---类加载子系统" target="_blank">https://a956551943.github.io/2021/06/21/Java---类加载子系统/</a>
         </li>
         
         <li>
@@ -460,7 +494,7 @@
     <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-     <!-- <img src="//pan.baidu.com/share/qrcode?url=https://a956551943.github.io/2021/06/18/Java---JVM%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/" alt="微信分享二维码"> -->
+     <!-- <img src="//pan.baidu.com/share/qrcode?url=https://a956551943.github.io/2021/06/21/Java---%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%AD%90%E7%B3%BB%E7%BB%9F/" alt="微信分享二维码"> -->
     </div>
 </div>
 
@@ -476,8 +510,8 @@
 <nav id="article-nav">
   
   
-    <a href="/2021/06/17/%E8%AE%B0%20---%20%E5%85%B3%E4%BA%8E%E8%BF%91%E6%AE%B5%E6%97%B6%E9%97%B4%E5%AD%A6%E4%B9%A0%E7%9A%84%E6%80%BB%E7%BB%93(Hexo%E5%BB%BA%E7%AB%99%20--%20%E8%BF%9B%E9%98%B6%E7%AF%87-%E4%B8%AA%E6%80%A7%E5%8C%96%E9%85%8D%E7%BD%AE)/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">Hexo建站进阶篇</div>
+    <a href="/2021/06/21/Java---JVM%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">Java---JVM体系结构</div>
       <i class="icon-circle-right"></i>
     </a>
   

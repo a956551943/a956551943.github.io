@@ -227,6 +227,180 @@
             
 
   
+    <article id="post-Java---类加载子系统" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2021/06/21/Java---%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%AD%90%E7%B3%BB%E7%BB%9F/" target="_blank">Java---类加载子系统</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2021/06/21/Java---%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%AD%90%E7%B3%BB%E7%BB%9F/" class="archive-article-date">
+        <time datetime="2021-06-21T09:03:50.266Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-06-21</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h5 id="继上篇-—-回顾JVM整体架构模型"><a href="#继上篇-—-回顾JVM整体架构模型" class="headerlink" title="继上篇 — 回顾JVM整体架构模型"></a>继上篇 — 回顾JVM整体架构模型</h5><p><img src="http://47.98.49.10/img/typora_img/image-20210621142143980.png" alt="image-20210621142143980"></p>
+<h5 id="类加载器与加载过程"><a href="#类加载器与加载过程" class="headerlink" title="类加载器与加载过程"></a>类加载器与加载过程</h5><p><img src="http://47.98.49.10/img/typora_img/image-20210621143914031.png" alt="类加载过程"></p>
+<p>类加载器子系统负责从文件系统或网络中加载class文件，class文件在文件开头有特定的标识(Caffe Baby)</p>
+<p>ClassLoader只负责文件的加载，至于他是否可以运行，由执行引擎Exection Engine决定</p>
+<p>加载的类信息存放在一块称为方法区的内存空间，除了类的信息外，方法区还会存放运行时常量池的信息，可能还包括字符串字面量和数字常量(这部分常量信息是Class文件中常量池部分的内存映射)</p>
+<h5 id="类加载器ClassLoader角色"><a href="#类加载器ClassLoader角色" class="headerlink" title="类加载器ClassLoader角色"></a>类加载器ClassLoader角色</h5><p><img src="http://47.98.49.10/img/typora_img/image-20210621152452000.png" alt="类加载器角色"></p>
+<ol>
+<li><p>class files 存在于本地硬盘上，可以理解为设计师画在纸上的模版，而最终这个模版在执行的时候是要加载到JVM中来的，再根据这个文件实例化出n个一模一样的实例</p>
+</li>
+<li><p>class files 被加载到JVM中，被称为DNA元数据模板，放在方法区</p>
+</li>
+<li><p>在.class文件-&gt;JVM-&gt;最终成为DNA元数据模板，此过程需要一个运输工具(类装载器ClassLoader)，扮演一个快递员的角色</p>
+</li>
+</ol>
+<h5 id="类加载过程-加载-链接-验证-准备-解析-初始化"><a href="#类加载过程-加载-链接-验证-准备-解析-初始化" class="headerlink" title="类加载过程: 加载-链接(验证-准备-解析)-初始化"></a>类加载过程: 加载-链接(验证-准备-解析)-初始化</h5><p><img src="http://47.98.49.10/img/typora_img/image-20210621153855666.png" alt="类加载过程"></p>
+<p>类加载流程图</p>
+<p><img src="http://47.98.49.10/img/typora_img/image-20210621155041314.png" alt="image-20210621155041314"></p>
+<h5 id="加载："><a href="#加载：" class="headerlink" title="加载："></a>加载：</h5><ol>
+<li>通过一个类的全限定名获取定义此类的二进制字节流</li>
+<li>将这个字节流所代表的静态存储结构转化为方法区的运行时数据结构</li>
+<li>在内存中生成一个代表这个类的java.lang.Class对象，作为方法区这个类的各种数据的访问入口</li>
+</ol>
+<p>补充: 加载.class文件的方式</p>
+<ol>
+<li>从本地系统中直接加载</li>
+<li>从网络中获取，典型场景：Web Applet</li>
+<li>从zip压缩包中读取，成为日后jar、war格式的基础</li>
+<li>运行时计算生成，使用最多的是：动态代理技术</li>
+<li>由其他文件生成：JSP应用</li>
+<li>从专有数据库中提取.class文件，比较少见</li>
+<li>从加密文件中获取，典型的防class文件被反编译的保护措施</li>
+</ol>
+<h5 id="链接："><a href="#链接：" class="headerlink" title="链接："></a>链接：</h5><p>​    验证(Verify)：</p>
+<p>​    目的在于Class文件的字节流中包含的信息符合当前虚拟机的要求，保证被加载类的正确性，不会危害虚拟机自身安全。</p>
+<p>​    主要包括四种验证，文件格式验证、元数据验证、字节码验证、符号引用验证</p>
+<p>​    准备(Prepare):</p>
+<p>​    为类变量分配内存并且设置该类变量的默认初始值，即零值</p>
+<p>​    这里不包含用final修饰的static，因为final在编译成为字节码文件的时候就已经分配了，在准备阶段会显式初始化</p>
+<p>​    这里不会为实例变量分配初始化，类变量会分配到方法区中，而实例变量是会随着对象分配到Java堆中</p>
+<p>​    解析(Resolve):</p>
+<p>​    将常量池内的符号引用转换为直接引用的过程</p>
+<p>​    事实上解析操作一般都会在JVM初始化完成后再执行</p>
+<p>​    在Java源代码转换为class文件的过程中，Java源代码并不知道使用的常量或者引用到的其他类信息究竟是在内存中的哪个位置，所以在    一开始的时候用一组符号来表示引用的类型，等到该类型在内存中创建完毕，则会将指向常量池中的这些符号引用转换为直接引用</p>
+<h5 id="初始化"><a href="#初始化" class="headerlink" title="初始化:"></a>初始化:</h5><ol>
+<li>初始化阶段就是执行类构造器方法<clinit>()的过程</clinit></li>
+<li>此方法不需要定义，是javac编译器自动收集类中的所有类变量的赋值动作和静态代码块中的语句合并而来</li>
+<li>构造器方法中的指令按语句在源文件中出现的顺序执行</li>
+<li><clinit>()不同于类的构造器(构造器是虚拟机视角下的<init>())</init></clinit></li>
+<li>若该类具有父类,JVM会保证子类的<clinit>()执行之前，父类的<clinit>()已经执行完毕</clinit></clinit></li>
+<li>虚拟机必须保证一个类的<clinit>()方法在多线程下被加锁，即保证同一个类的clinit方法只被执行一次</clinit></li>
+</ol>
+<h5 id="类加载器类型"><a href="#类加载器类型" class="headerlink" title="类加载器类型:"></a>类加载器类型:</h5><p>JVM支持两种类型的类加载器，分别为引导类加载器(Bootstrap Classloader)和自定义类加载器(User-Defined Classloader)</p>
+<p>从概念上来讲，自定义类加载一般指的是程序中由开发人员自定义的一类类加载器，但是Java虚拟机规范却没有这么定义，而是将所有派生于抽象类ClassLoader的类加载器都划分为自定义类加载器</p>
+<p>无论类加载器如何划分，在程序中我们常见的三种类加载器为：引导类加载器、扩展类加载器、系统类加载器</p>
+<p>在JDK9以后，扩展类加载器ExtClassloader替换为平台类加载器PlatformClassloader,可能的目的是因为目前*.jar都放在ext目录下执行不安全？所以JDK1.9直接废除了这种做法？提供平台类加载器，为了保持和系统类加载器与应用类加载器之间的平衡？</p>
+<h5 id="虚拟机自带的类加载器"><a href="#虚拟机自带的类加载器" class="headerlink" title="虚拟机自带的类加载器"></a>虚拟机自带的类加载器</h5><p>启动类加载器:</p>
+<p>​    由C/C++实现嵌套在JVM内部</p>
+<p>​    用来加载核心类库(JAVA_HOME/jre/lib/rt.jar、resource.jar或sun.boot.class.path下的内容)，用于提供JVM自身需要的类</p>
+<p>​    没有父加载器，是扩展类加载和应用程序类加载器的父类</p>
+<p>​    出于安全考虑，Bootstrap启动类加载器只加载java、javax、sun等开头的类</p>
+<p>扩展类加载器:</p>
+<p>​    Java语言编写，由sun.misc.Launcher$ExtClassloader实现</p>
+<p>​    派生于Classloader类</p>
+<p>​    父加载器为启动类加载器</p>
+<p>​    从java.ext.dirs系统属性所制定的目录中加载类库，或从JDK安装目录的jre/lib/ext子目录下加载类库.如果用户创建的jar放在此目录下，    也会自动由扩展类加载器加载。</p>
+<p>应用程序类加载器:</p>
+<p>​    Java语言编写，由sun.misc.Launcher$ExtClassloader实现</p>
+<p>​    派生于Classloader类</p>
+<p>​    父加载器为扩展类加载器</p>
+<p>​    负责加载环境变量classpath或系统属性java.class.path指定路径下的类库</p>
+<p>​    该类加载器是程序中默认的类加载器，一般，Java应用的类(自己写的源代码)都是由它来加载</p>
+<p>​    通过CLassLoader.getSystemClassLoader()方法可获取到该类加载器</p>
+<h5 id="为什么要自定义类加载器"><a href="#为什么要自定义类加载器" class="headerlink" title="为什么要自定义类加载器?"></a>为什么要自定义类加载器?</h5><ol>
+<li>隔离类加载器，防止其他中间件模块的核心类库与当前业务模块引用包冲突 避免类冲突</li>
+<li>修改类的加载方式</li>
+<li>扩展加载源，从数据库中加载类、网络io中加载类等</li>
+<li>防止源码泄漏，对字节码文件进行加密，在类加载过程中进行解密</li>
+</ol>
+
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">Java</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+	<div class="article-category tagcloud">
+		<i class="icon-book icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/Java//" class="article-tag-list-link color5">Java</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2021/06/21/Java---%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%AD%90%E7%B3%BB%E7%BB%9F/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-Java---JVM体系结构" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -235,7 +409,7 @@
   
     <h1 itemprop="name">
 	
-	  <a class="article-title" href="/2021/06/18/Java---JVM%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/" target="_blank">Java---JVM体系结构</a>
+	  <a class="article-title" href="/2021/06/21/Java---JVM%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/" target="_blank">Java---JVM体系结构</a>
   
     </h1>
   
@@ -243,8 +417,8 @@
 
   
   
-<a href="/2021/06/18/Java---JVM%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/" class="archive-article-date">
-        <time datetime="2021-06-18T09:42:54.544Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-06-18</time>
+<a href="/2021/06/21/Java---JVM%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/" class="archive-article-date">
+        <time datetime="2021-06-21T03:29:33.641Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-06-21</time>
 </a>
 
   
@@ -300,6 +474,40 @@
 <p><img src="http://47.98.49.10/img/typora_img/image-20210618145029224.png" alt="Java执行流程"></p>
 <p>执行引擎主要做的事情是将操作系统无法识别的字节码指令翻译成可识别的机器指令，而在这里面JIT即时编译器所做的事情就是将字节码指令中的热点代码进行提前编译，并将编译后的机器指令进行缓存(放入方法区)提升程序性能。</p>
 <p>原先 执行引擎在执行解析字节码指令的时候是用到哪块字节码指令就用解释器直接进行机器指令翻译，然后再去操作系统执行。在有即时编译器的情况下，执行引擎在执行指令时，会从缓存中读取 热点代码的机器指令，不需要再用解释器进行字节码指令翻译。</p>
+<h5 id="JVM架构模型"><a href="#JVM架构模型" class="headerlink" title="JVM架构模型"></a>JVM架构模型</h5><p>目前有两种虚拟机架构模型：</p>
+<p>一、基于栈的指令集架构：</p>
+<p>1,    设计实现简单，适用于资源受限的系统(小型芯片，空调，冰箱等)</p>
+<p>2,    避开了寄存器的分配难题，使用了零地址指令的方式</p>
+<p>3,    指令流中的指令大部分都是零地址指令，其执行过程依赖操作栈，指令集更小，编译器更容易实现</p>
+<p>4,    不需要硬件支持，可移植性好，更好实现跨平台</p>
+<p>二、基于寄存器的指令集架构</p>
+<p>1,    典型应用x86二进制指令，典型的PC以及Android的Davlik虚拟机</p>
+<p>2,    指令集架构完全依赖硬件，可移植性差</p>
+<p>3,    性能优秀，执行效率高</p>
+<p>4,    花费更少的指令去完成一项工作</p>
+<p>5,    大部分情况下指令集都是以  一地址指令、二地址指令、三地址指令为主</p>
+<p>栈模型的指令集小,但是JVM中字节码是以8位为一个指令进行执行，在寄存器模型中，指令是以16位的指令方式执行，那么同样的指令，寄存器模型中可以执行的内容就多，一项16位的操作在8位指令集中需2步，在16位指令集中只需要1步即可。</p>
+<p>总结：</p>
+<p>由于跨平台的设计，Java的指令都是根据栈来设计的。不同的CPU架构不同，所以不能设计为基于寄存器的。优点是跨平台，指令集小，编译器容易实现，缺陷是性能下降，实现同样功能需要更多指令。</p>
+<p>时至今日，尽管嵌入式平台已经不是Java程序运行的主流平台了(准确来说应该是HotSpotVM 的宿主环境已经不限于嵌入式平台了)，那么为什么不将架构更换为基于寄存器的架构呢？</p>
+<h5 id="JVM的生命周期"><a href="#JVM的生命周期" class="headerlink" title="JVM的生命周期"></a>JVM的生命周期</h5><p>虚拟机的启动：</p>
+<p>Java虚拟机的启动是通过引导类加载器(bootstrap classloader)创建的一个初始类(initial class)来完成的，这个类是由虚拟机的具体实现来指定的(HotSpot、JRockit、J9都有不同的引导类加载器).</p>
+<p>虚拟机的执行：</p>
+<p>一个运行中的Java虚拟机有一个清晰的任务 — 执行Java程序</p>
+<p>程序开始执行时，它才开始运行，程序结束时他就停止</p>
+<p>执行一个所谓的Java程序的时候，真正执行的是一个叫做Java虚拟机的进程</p>
+<p>虚拟机的退出：</p>
+<p>一、程序正常执行结束</p>
+<p>二、程序在执行过程中遇到了异常或错误而终止</p>
+<p>三、由于操作系统错误导致Java虚拟机进程中断</p>
+<p>四、某线程调用Runtime或System类的exit方法，或Runtime的halt方法，并且Java安全管理器也允许这次exit或halt操作</p>
+<p>除此之外，JNI(Java Native Interface)规范描述了用JNI Invocation API来加载或卸载Java虚拟机时，Java虚拟机的退出情况</p>
+<h5 id="JVM发展历程"><a href="#JVM发展历程" class="headerlink" title="JVM发展历程"></a>JVM发展历程</h5><p>Sum Classic VM : 世界上第一款商用Java虚拟机</p>
+<p>Exact VM：现代高性能虚拟机雏形 — 热点探测、编译器与解释器同时工作的模式</p>
+<p>HotSpot VM：绝对的市场地位，目前JDK8 默认虚拟机</p>
+<p>JRockit：专注于服务端的应用(资源不受限的应用)</p>
+<p>J9: IBM开发，定位于HotSpot相似</p>
+<p>Graal VM: 未来有可能取代HotSpot的虚拟机,由Oracle自己研发，号称(Run Programs Faster Anywhere) 与1995年Java的(write once,run anywhere)遥相呼应。</p>
 
     
 
@@ -337,7 +545,7 @@
 
     
     <p class="article-more-link">
-      <a class="article-more-a" href="/2021/06/18/Java---JVM%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/">展开全文 >></a>
+      <a class="article-more-a" href="/2021/06/21/Java---JVM%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/">展开全文 >></a>
     </p>
     
 
