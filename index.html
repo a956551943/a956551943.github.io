@@ -235,7 +235,7 @@
   
     <h1 itemprop="name">
 	
-	  <a class="article-title" href="/2021/06/21/Java---%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%AD%90%E7%B3%BB%E7%BB%9F/" target="_blank">Java---类加载子系统</a>
+	  <a class="article-title" href="/2021/06/22/Java---%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%AD%90%E7%B3%BB%E7%BB%9F/" target="_blank">Java---类加载子系统</a>
   
     </h1>
   
@@ -243,8 +243,8 @@
 
   
   
-<a href="/2021/06/21/Java---%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%AD%90%E7%B3%BB%E7%BB%9F/" class="archive-article-date">
-        <time datetime="2021-06-21T09:03:50.266Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-06-21</time>
+<a href="/2021/06/22/Java---%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%AD%90%E7%B3%BB%E7%BB%9F/" class="archive-article-date">
+        <time datetime="2021-06-22T06:25:04.590Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-06-22</time>
 </a>
 
   
@@ -272,7 +272,7 @@
 </ol>
 <h5 id="类加载过程-加载-链接-验证-准备-解析-初始化"><a href="#类加载过程-加载-链接-验证-准备-解析-初始化" class="headerlink" title="类加载过程: 加载-链接(验证-准备-解析)-初始化"></a>类加载过程: 加载-链接(验证-准备-解析)-初始化</h5><p><img src="http://47.98.49.10/img/typora_img/image-20210621153855666.png" alt="类加载过程"></p>
 <p>类加载流程图</p>
-<p><img src="http://47.98.49.10/img/typora_img/image-20210621155041314.png" alt="image-20210621155041314"></p>
+<p><img src="http://47.98.49.10/img/typora_img/image-20210621155041314.png" alt="类加载流程图"></p>
 <h5 id="加载："><a href="#加载：" class="headerlink" title="加载："></a>加载：</h5><ol>
 <li>通过一个类的全限定名获取定义此类的二进制字节流</li>
 <li>将这个字节流所代表的静态存储结构转化为方法区的运行时数据结构</li>
@@ -334,6 +334,104 @@
 <li>扩展加载源，从数据库中加载类、网络io中加载类等</li>
 <li>防止源码泄漏，对字节码文件进行加密，在类加载过程中进行解密</li>
 </ol>
+<h5 id="用户自定义类加载器实现步骤"><a href="#用户自定义类加载器实现步骤" class="headerlink" title="用户自定义类加载器实现步骤"></a>用户自定义类加载器实现步骤</h5><ol>
+<li>开发人员可以通过继承抽象类java.lang.Classloader类的方式，实现自己的类加载器，满足一些特殊的需求</li>
+<li>在JDK1.2之前，在自定义类加载器时，总是会去继承Classloader类并重写loadClass()方法，从而实现自定义的类加载器，但是在JDK1.2之后，已不再建议用户去覆盖loadClass()方法，而是建议把自定义类加载器逻辑写在findClass()中</li>
+<li>在自定义类加载器时，如果没有太过复杂的需求，可以直接继承URLClassLoader类，这样就可以避免自己去编写findClass()方法以及其获取字节码流的方式，使自定义类加载器编写更加简洁</li>
+</ol>
+<p>ClassLoader类，它是一个抽象类，其后所有的类加载器都继承自ClassLoader(不包括启动类/引导类加载器)</p>
+<table>
+<thead>
+<tr>
+<th align="left">方法名称</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">getParent()</td>
+<td align="left">返回该类加载器的超类加载器</td>
+</tr>
+<tr>
+<td align="left">loadClass(String name)</td>
+<td align="left">加载名称为name的类,返回结果为java.lang.Class类的实例</td>
+</tr>
+<tr>
+<td align="left">findClass(String name)</td>
+<td align="left">加载名称为name的类,返回结果为java.lang.Class类的实例</td>
+</tr>
+<tr>
+<td align="left">findLoadedClass(String name)</td>
+<td align="left">查找名称为name的已经被加载过的类,返回结果为java.lang.Class类的实例</td>
+</tr>
+<tr>
+<td align="left">defineClass(String name, byte[] b,int off,int len)</td>
+<td align="left">把字节数组b中的内容转换为一个Java类,返回结果为java.lang.Class类的实例</td>
+</tr>
+<tr>
+<td align="left">resolveClass(Class&lt;?&gt; c)</td>
+<td align="left">链接指定的一个Java类</td>
+</tr>
+</tbody></table>
+<h5 id="获取ClassLoader的方式"><a href="#获取ClassLoader的方式" class="headerlink" title="获取ClassLoader的方式"></a>获取ClassLoader的方式</h5><table>
+<thead>
+<tr>
+<th>方式一：获取当前类的ClassLoader</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>class.getClassLoader()</td>
+</tr>
+<tr>
+<td>方式二：获取当前线程上下文的ClassLoader</td>
+</tr>
+<tr>
+<td>Thread.currentThread().getContextClassLoader()</td>
+</tr>
+<tr>
+<td>方式三：获取系统的ClassLoader</td>
+</tr>
+<tr>
+<td>ClassLoader.getSystemClassLoader()</td>
+</tr>
+<tr>
+<td>方式四：获取调用者的ClassLoader</td>
+</tr>
+<tr>
+<td>DriverManager.getCallerClassLoader()</td>
+</tr>
+</tbody></table>
+<h5 id="双亲委派机制：类的加载会从顶级类加载器开始"><a href="#双亲委派机制：类的加载会从顶级类加载器开始" class="headerlink" title="双亲委派机制：类的加载会从顶级类加载器开始"></a>双亲委派机制：类的加载会从顶级类加载器开始</h5><p>Java虚拟机对class文件采用的是按需加载的方式，也就是说当需要使用该类时才会将它的class文件加载到内存生成class对象。而且加载某个类的class文件时，Java虚拟机采取的是双亲委派模式，即把请求交由父类处理，它是一种任务委派模式。</p>
+<p><img src="http://47.98.49.10/img/typora_img/image-20210622113259778.png" alt="双亲委派模型"></p>
+<p><strong>工作原理</strong></p>
+<p>1）如果一个类加载器收到了类加载的请求，它并不会自己先去加载，而是把这个请求委托给父类的加载器去执行</p>
+<p>2）如果父类加载器还存在其父类加载器，则进一步向上委托，依次递归，请求最终将到达顶层的启动类加载器</p>
+<p>3）如果父类加载器可以完成类加载任务，则成功返回，倘若父类加载器无法完成此加载任务，子加载器才会尝试自己加载</p>
+<p>以上就是双亲委派模式</p>
+<p><strong>JDBC.jar的加载过程</strong></p>
+<p><img src="http://47.98.49.10/img/typora_img/image-20210622114527616.png" alt="jdbc.jar加载工作原理"></p>
+<p>SPI: Service Provide Interface 服务提供接口,顾名思义,由实现接口的服务自己提供实现类即可</p>
+<h5 id="双亲委派的原因与优势"><a href="#双亲委派的原因与优势" class="headerlink" title="双亲委派的原因与优势"></a>双亲委派的原因与优势</h5><ol>
+<li>避免类的重复加载</li>
+<li>防止核心API被篡改</li>
+</ol>
+<h5 id="JVM中表示两个class对象是否为同一个类存在两个必要条件："><a href="#JVM中表示两个class对象是否为同一个类存在两个必要条件：" class="headerlink" title="JVM中表示两个class对象是否为同一个类存在两个必要条件："></a>JVM中表示两个class对象是否为同一个类存在两个必要条件：</h5><ol>
+<li>类的完整类名必须一致，包括包名</li>
+<li>加载这个类的Classloader(指ClassLoader实例对象)必须相同</li>
+</ol>
+<p>换句话说，在JVM中，即使这两个对象来源于同一个class文件，被同一个虚拟机所加载，但只要加载他们的ClassLoader实例对象不同，那么这两个类对象也是不相等的</p>
+<p>JVM必须知道一个类型是由启动类加载器加载的还是用户类加载器加载的。如果一个类型是由用户类加载器加载的，那么JVM会将这个类加载器的一个引用作为类型信息的一部分保存在方法区中。当解析一个类型到另一个类型的引用的时候，JVM需要保证这两个类型的类加载器是相同的</p>
+<h5 id="Java程序对类的使用方式："><a href="#Java程序对类的使用方式：" class="headerlink" title="Java程序对类的使用方式："></a>Java程序对类的使用方式：</h5><p>主动使用：</p>
+<ol>
+<li>创建类的实例</li>
+<li>访问某个类或接口的静态变量，或者对该静态变量赋值</li>
+<li>调用类的静态方法</li>
+<li>反射（比如：Class.forName(“fit.hanyu”)）</li>
+<li>初始化一个类的字类</li>
+<li>Java虚拟机启动时，被标明为启动类的类</li>
+<li>JDK7开始提供的动态语言支持: java.lang.invoke.MethodHandle实例的解析结果REF_getStatic、REF_putStatic、REF_invokeStatic句柄对应的类没有初始化，则初始化</li>
+</ol>
+<p>被动使用：</p>
+<p>除了主动使用，其他Java类的使用方式都是被动使用，被动使用不会导致类的初始化</p>
 
     
 
@@ -371,7 +469,7 @@
 
     
     <p class="article-more-link">
-      <a class="article-more-a" href="/2021/06/21/Java---%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%AD%90%E7%B3%BB%E7%BB%9F/">展开全文 >></a>
+      <a class="article-more-a" href="/2021/06/22/Java---%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%AD%90%E7%B3%BB%E7%BB%9F/">展开全文 >></a>
     </p>
     
 

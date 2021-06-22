@@ -6,20 +6,30 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="https://a956551943.github.io">
-  <title>Tag: Java | Hanyu bolg</title>
+  <title>Java---类加载子系统 | Hanyu bolg</title>
   <meta name="generator" content="hexo-theme-yilia-plus">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   
-  <meta name="description" content="record everything for life">
-<meta property="og:type" content="website">
-<meta property="og:title" content="Hanyu bolg">
-<meta property="og:url" content="https://a956551943.github.io/tags/Java/index.html">
+  <meta name="description" content="继上篇 — 回顾JVM整体架构模型 类加载器与加载过程 类加载器子系统负责从文件系统或网络中加载class文件，class文件在文件开头有特定的标识(Caffe Baby) ClassLoader只负责文件的加载，至于他是否可以运行，由执行引擎Exection Engine决定 加载的类信息存放在一块称为方法区的内存空间，除了类的信息外，方法区还会存放运行时常量池的信息，可能还包括字符串字面量和数">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java---类加载子系统">
+<meta property="og:url" content="https://a956551943.github.io/2021/06/22/Java---%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%AD%90%E7%B3%BB%E7%BB%9F/index.html">
 <meta property="og:site_name" content="Hanyu bolg">
-<meta property="og:description" content="record everything for life">
+<meta property="og:description" content="继上篇 — 回顾JVM整体架构模型 类加载器与加载过程 类加载器子系统负责从文件系统或网络中加载class文件，class文件在文件开头有特定的标识(Caffe Baby) ClassLoader只负责文件的加载，至于他是否可以运行，由执行引擎Exection Engine决定 加载的类信息存放在一块称为方法区的内存空间，除了类的信息外，方法区还会存放运行时常量池的信息，可能还包括字符串字面量和数">
 <meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://47.98.49.10/img/typora_img/image-20210621142143980.png">
+<meta property="og:image" content="http://47.98.49.10/img/typora_img/image-20210621143914031.png">
+<meta property="og:image" content="http://47.98.49.10/img/typora_img/image-20210621152452000.png">
+<meta property="og:image" content="http://47.98.49.10/img/typora_img/image-20210621153855666.png">
+<meta property="og:image" content="http://47.98.49.10/img/typora_img/image-20210621155041314.png">
+<meta property="og:image" content="http://47.98.49.10/img/typora_img/image-20210622113259778.png">
+<meta property="og:image" content="http://47.98.49.10/img/typora_img/image-20210622114527616.png">
+<meta property="article:published_time" content="2021-06-22T06:25:04.590Z">
+<meta property="article:modified_time" content="2021-06-22T06:25:04.590Z">
 <meta property="article:author" content="Han yu">
-<meta property="article:tag" content="计算机,算法,Java">
+<meta property="article:tag" content="Java">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://47.98.49.10/img/typora_img/image-20210621142143980.png">
   
     <link rel="alternative" href="/atom.xml" title="Hanyu bolg" type="application/atom+xml">
   
@@ -220,41 +230,298 @@
               class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
+            <article id="post-Java---类加载子系统" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
   
   
-    
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2021" class="archive-year">2021</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	
+    <h1 class="article-title" itemprop="name">
+      Java---类加载子系统
+    </h1>
+  
+
+
+  
+  
+        
+        <span id="busuanzi_container_page_pv" style='display:none' class="archive-article-date">
+              <i class="icon-smile icon"></i> 阅读数：<span id="busuanzi_value_page_pv"></span>次
+        </span>
+
 <a href="/2021/06/22/Java---%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%AD%90%E7%B3%BB%E7%BB%9F/" class="archive-article-date">
         <time datetime="2021-06-22T06:25:04.590Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-06-22</time>
 </a>
 
+  
+  
+    
+<div style="margin-top:10px;">
+  <span class="post-time">
+    <span class="post-meta-item-icon">
+      <!-- fonts.scss -->
+      <!-- 百度字体平台:http://fontstore.baidu.com/static/editor/index.html -->
+      <i class="icon-statistics"></i>
+      <span class="post-meta-item-text"> 字数统计:</span>
+      <span class="post-count">2.9k字</span>
+    </span>
+  </span>
+
+  <span class="post-time">
+    &nbsp; | &nbsp;
+    <span class="post-meta-item-icon">
+      <i class="icon-book icon"></i>
+      <span class="post-meta-item-text"> 阅读时长≈</span>
+      <span class="post-count">10分</span>
+    </span>
+  </span>
+</div>
+
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h5 id="继上篇-—-回顾JVM整体架构模型"><a href="#继上篇-—-回顾JVM整体架构模型" class="headerlink" title="继上篇 — 回顾JVM整体架构模型"></a>继上篇 — 回顾JVM整体架构模型</h5><p><img src="http://47.98.49.10/img/typora_img/image-20210621142143980.png" alt="image-20210621142143980"></p>
+<h5 id="类加载器与加载过程"><a href="#类加载器与加载过程" class="headerlink" title="类加载器与加载过程"></a>类加载器与加载过程</h5><p><img src="http://47.98.49.10/img/typora_img/image-20210621143914031.png" alt="类加载过程"></p>
+<p>类加载器子系统负责从文件系统或网络中加载class文件，class文件在文件开头有特定的标识(Caffe Baby)</p>
+<p>ClassLoader只负责文件的加载，至于他是否可以运行，由执行引擎Exection Engine决定</p>
+<p>加载的类信息存放在一块称为方法区的内存空间，除了类的信息外，方法区还会存放运行时常量池的信息，可能还包括字符串字面量和数字常量(这部分常量信息是Class文件中常量池部分的内存映射)</p>
+<h5 id="类加载器ClassLoader角色"><a href="#类加载器ClassLoader角色" class="headerlink" title="类加载器ClassLoader角色"></a>类加载器ClassLoader角色</h5><p><img src="http://47.98.49.10/img/typora_img/image-20210621152452000.png" alt="类加载器角色"></p>
+<ol>
+<li><p>class files 存在于本地硬盘上，可以理解为设计师画在纸上的模版，而最终这个模版在执行的时候是要加载到JVM中来的，再根据这个文件实例化出n个一模一样的实例</p>
+</li>
+<li><p>class files 被加载到JVM中，被称为DNA元数据模板，放在方法区</p>
+</li>
+<li><p>在.class文件-&gt;JVM-&gt;最终成为DNA元数据模板，此过程需要一个运输工具(类装载器ClassLoader)，扮演一个快递员的角色</p>
+</li>
+</ol>
+<h5 id="类加载过程-加载-链接-验证-准备-解析-初始化"><a href="#类加载过程-加载-链接-验证-准备-解析-初始化" class="headerlink" title="类加载过程: 加载-链接(验证-准备-解析)-初始化"></a>类加载过程: 加载-链接(验证-准备-解析)-初始化</h5><p><img src="http://47.98.49.10/img/typora_img/image-20210621153855666.png" alt="类加载过程"></p>
+<p>类加载流程图</p>
+<p><img src="http://47.98.49.10/img/typora_img/image-20210621155041314.png" alt="类加载流程图"></p>
+<h5 id="加载："><a href="#加载：" class="headerlink" title="加载："></a>加载：</h5><ol>
+<li>通过一个类的全限定名获取定义此类的二进制字节流</li>
+<li>将这个字节流所代表的静态存储结构转化为方法区的运行时数据结构</li>
+<li>在内存中生成一个代表这个类的java.lang.Class对象，作为方法区这个类的各种数据的访问入口</li>
+</ol>
+<p>补充: 加载.class文件的方式</p>
+<ol>
+<li>从本地系统中直接加载</li>
+<li>从网络中获取，典型场景：Web Applet</li>
+<li>从zip压缩包中读取，成为日后jar、war格式的基础</li>
+<li>运行时计算生成，使用最多的是：动态代理技术</li>
+<li>由其他文件生成：JSP应用</li>
+<li>从专有数据库中提取.class文件，比较少见</li>
+<li>从加密文件中获取，典型的防class文件被反编译的保护措施</li>
+</ol>
+<h5 id="链接："><a href="#链接：" class="headerlink" title="链接："></a>链接：</h5><p>​    验证(Verify)：</p>
+<p>​    目的在于Class文件的字节流中包含的信息符合当前虚拟机的要求，保证被加载类的正确性，不会危害虚拟机自身安全。</p>
+<p>​    主要包括四种验证，文件格式验证、元数据验证、字节码验证、符号引用验证</p>
+<p>​    准备(Prepare):</p>
+<p>​    为类变量分配内存并且设置该类变量的默认初始值，即零值</p>
+<p>​    这里不包含用final修饰的static，因为final在编译成为字节码文件的时候就已经分配了，在准备阶段会显式初始化</p>
+<p>​    这里不会为实例变量分配初始化，类变量会分配到方法区中，而实例变量是会随着对象分配到Java堆中</p>
+<p>​    解析(Resolve):</p>
+<p>​    将常量池内的符号引用转换为直接引用的过程</p>
+<p>​    事实上解析操作一般都会在JVM初始化完成后再执行</p>
+<p>​    在Java源代码转换为class文件的过程中，Java源代码并不知道使用的常量或者引用到的其他类信息究竟是在内存中的哪个位置，所以在    一开始的时候用一组符号来表示引用的类型，等到该类型在内存中创建完毕，则会将指向常量池中的这些符号引用转换为直接引用</p>
+<h5 id="初始化"><a href="#初始化" class="headerlink" title="初始化:"></a>初始化:</h5><ol>
+<li>初始化阶段就是执行类构造器方法<clinit>()的过程</clinit></li>
+<li>此方法不需要定义，是javac编译器自动收集类中的所有类变量的赋值动作和静态代码块中的语句合并而来</li>
+<li>构造器方法中的指令按语句在源文件中出现的顺序执行</li>
+<li><clinit>()不同于类的构造器(构造器是虚拟机视角下的<init>())</init></clinit></li>
+<li>若该类具有父类,JVM会保证子类的<clinit>()执行之前，父类的<clinit>()已经执行完毕</clinit></clinit></li>
+<li>虚拟机必须保证一个类的<clinit>()方法在多线程下被加锁，即保证同一个类的clinit方法只被执行一次</clinit></li>
+</ol>
+<h5 id="类加载器类型"><a href="#类加载器类型" class="headerlink" title="类加载器类型:"></a>类加载器类型:</h5><p>JVM支持两种类型的类加载器，分别为引导类加载器(Bootstrap Classloader)和自定义类加载器(User-Defined Classloader)</p>
+<p>从概念上来讲，自定义类加载一般指的是程序中由开发人员自定义的一类类加载器，但是Java虚拟机规范却没有这么定义，而是将所有派生于抽象类ClassLoader的类加载器都划分为自定义类加载器</p>
+<p>无论类加载器如何划分，在程序中我们常见的三种类加载器为：引导类加载器、扩展类加载器、系统类加载器</p>
+<p>在JDK9以后，扩展类加载器ExtClassloader替换为平台类加载器PlatformClassloader,可能的目的是因为目前*.jar都放在ext目录下执行不安全？所以JDK1.9直接废除了这种做法？提供平台类加载器，为了保持和系统类加载器与应用类加载器之间的平衡？</p>
+<h5 id="虚拟机自带的类加载器"><a href="#虚拟机自带的类加载器" class="headerlink" title="虚拟机自带的类加载器"></a>虚拟机自带的类加载器</h5><p>启动类加载器:</p>
+<p>​    由C/C++实现嵌套在JVM内部</p>
+<p>​    用来加载核心类库(JAVA_HOME/jre/lib/rt.jar、resource.jar或sun.boot.class.path下的内容)，用于提供JVM自身需要的类</p>
+<p>​    没有父加载器，是扩展类加载和应用程序类加载器的父类</p>
+<p>​    出于安全考虑，Bootstrap启动类加载器只加载java、javax、sun等开头的类</p>
+<p>扩展类加载器:</p>
+<p>​    Java语言编写，由sun.misc.Launcher$ExtClassloader实现</p>
+<p>​    派生于Classloader类</p>
+<p>​    父加载器为启动类加载器</p>
+<p>​    从java.ext.dirs系统属性所制定的目录中加载类库，或从JDK安装目录的jre/lib/ext子目录下加载类库.如果用户创建的jar放在此目录下，    也会自动由扩展类加载器加载。</p>
+<p>应用程序类加载器:</p>
+<p>​    Java语言编写，由sun.misc.Launcher$ExtClassloader实现</p>
+<p>​    派生于Classloader类</p>
+<p>​    父加载器为扩展类加载器</p>
+<p>​    负责加载环境变量classpath或系统属性java.class.path指定路径下的类库</p>
+<p>​    该类加载器是程序中默认的类加载器，一般，Java应用的类(自己写的源代码)都是由它来加载</p>
+<p>​    通过CLassLoader.getSystemClassLoader()方法可获取到该类加载器</p>
+<h5 id="为什么要自定义类加载器"><a href="#为什么要自定义类加载器" class="headerlink" title="为什么要自定义类加载器?"></a>为什么要自定义类加载器?</h5><ol>
+<li>隔离类加载器，防止其他中间件模块的核心类库与当前业务模块引用包冲突 避免类冲突</li>
+<li>修改类的加载方式</li>
+<li>扩展加载源，从数据库中加载类、网络io中加载类等</li>
+<li>防止源码泄漏，对字节码文件进行加密，在类加载过程中进行解密</li>
+</ol>
+<h5 id="用户自定义类加载器实现步骤"><a href="#用户自定义类加载器实现步骤" class="headerlink" title="用户自定义类加载器实现步骤"></a>用户自定义类加载器实现步骤</h5><ol>
+<li>开发人员可以通过继承抽象类java.lang.Classloader类的方式，实现自己的类加载器，满足一些特殊的需求</li>
+<li>在JDK1.2之前，在自定义类加载器时，总是会去继承Classloader类并重写loadClass()方法，从而实现自定义的类加载器，但是在JDK1.2之后，已不再建议用户去覆盖loadClass()方法，而是建议把自定义类加载器逻辑写在findClass()中</li>
+<li>在自定义类加载器时，如果没有太过复杂的需求，可以直接继承URLClassLoader类，这样就可以避免自己去编写findClass()方法以及其获取字节码流的方式，使自定义类加载器编写更加简洁</li>
+</ol>
+<p>ClassLoader类，它是一个抽象类，其后所有的类加载器都继承自ClassLoader(不包括启动类/引导类加载器)</p>
+<table>
+<thead>
+<tr>
+<th align="left">方法名称</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">getParent()</td>
+<td align="left">返回该类加载器的超类加载器</td>
+</tr>
+<tr>
+<td align="left">loadClass(String name)</td>
+<td align="left">加载名称为name的类,返回结果为java.lang.Class类的实例</td>
+</tr>
+<tr>
+<td align="left">findClass(String name)</td>
+<td align="left">加载名称为name的类,返回结果为java.lang.Class类的实例</td>
+</tr>
+<tr>
+<td align="left">findLoadedClass(String name)</td>
+<td align="left">查找名称为name的已经被加载过的类,返回结果为java.lang.Class类的实例</td>
+</tr>
+<tr>
+<td align="left">defineClass(String name, byte[] b,int off,int len)</td>
+<td align="left">把字节数组b中的内容转换为一个Java类,返回结果为java.lang.Class类的实例</td>
+</tr>
+<tr>
+<td align="left">resolveClass(Class&lt;?&gt; c)</td>
+<td align="left">链接指定的一个Java类</td>
+</tr>
+</tbody></table>
+<h5 id="获取ClassLoader的方式"><a href="#获取ClassLoader的方式" class="headerlink" title="获取ClassLoader的方式"></a>获取ClassLoader的方式</h5><table>
+<thead>
+<tr>
+<th>方式一：获取当前类的ClassLoader</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>class.getClassLoader()</td>
+</tr>
+<tr>
+<td>方式二：获取当前线程上下文的ClassLoader</td>
+</tr>
+<tr>
+<td>Thread.currentThread().getContextClassLoader()</td>
+</tr>
+<tr>
+<td>方式三：获取系统的ClassLoader</td>
+</tr>
+<tr>
+<td>ClassLoader.getSystemClassLoader()</td>
+</tr>
+<tr>
+<td>方式四：获取调用者的ClassLoader</td>
+</tr>
+<tr>
+<td>DriverManager.getCallerClassLoader()</td>
+</tr>
+</tbody></table>
+<h5 id="双亲委派机制：类的加载会从顶级类加载器开始"><a href="#双亲委派机制：类的加载会从顶级类加载器开始" class="headerlink" title="双亲委派机制：类的加载会从顶级类加载器开始"></a>双亲委派机制：类的加载会从顶级类加载器开始</h5><p>Java虚拟机对class文件采用的是按需加载的方式，也就是说当需要使用该类时才会将它的class文件加载到内存生成class对象。而且加载某个类的class文件时，Java虚拟机采取的是双亲委派模式，即把请求交由父类处理，它是一种任务委派模式。</p>
+<p><img src="http://47.98.49.10/img/typora_img/image-20210622113259778.png" alt="双亲委派模型"></p>
+<p><strong>工作原理</strong></p>
+<p>1）如果一个类加载器收到了类加载的请求，它并不会自己先去加载，而是把这个请求委托给父类的加载器去执行</p>
+<p>2）如果父类加载器还存在其父类加载器，则进一步向上委托，依次递归，请求最终将到达顶层的启动类加载器</p>
+<p>3）如果父类加载器可以完成类加载任务，则成功返回，倘若父类加载器无法完成此加载任务，子加载器才会尝试自己加载</p>
+<p>以上就是双亲委派模式</p>
+<p><strong>JDBC.jar的加载过程</strong></p>
+<p><img src="http://47.98.49.10/img/typora_img/image-20210622114527616.png" alt="jdbc.jar加载工作原理"></p>
+<p>SPI: Service Provide Interface 服务提供接口,顾名思义,由实现接口的服务自己提供实现类即可</p>
+<h5 id="双亲委派的原因与优势"><a href="#双亲委派的原因与优势" class="headerlink" title="双亲委派的原因与优势"></a>双亲委派的原因与优势</h5><ol>
+<li>避免类的重复加载</li>
+<li>防止核心API被篡改</li>
+</ol>
+<h5 id="JVM中表示两个class对象是否为同一个类存在两个必要条件："><a href="#JVM中表示两个class对象是否为同一个类存在两个必要条件：" class="headerlink" title="JVM中表示两个class对象是否为同一个类存在两个必要条件："></a>JVM中表示两个class对象是否为同一个类存在两个必要条件：</h5><ol>
+<li>类的完整类名必须一致，包括包名</li>
+<li>加载这个类的Classloader(指ClassLoader实例对象)必须相同</li>
+</ol>
+<p>换句话说，在JVM中，即使这两个对象来源于同一个class文件，被同一个虚拟机所加载，但只要加载他们的ClassLoader实例对象不同，那么这两个类对象也是不相等的</p>
+<p>JVM必须知道一个类型是由启动类加载器加载的还是用户类加载器加载的。如果一个类型是由用户类加载器加载的，那么JVM会将这个类加载器的一个引用作为类型信息的一部分保存在方法区中。当解析一个类型到另一个类型的引用的时候，JVM需要保证这两个类型的类加载器是相同的</p>
+<h5 id="Java程序对类的使用方式："><a href="#Java程序对类的使用方式：" class="headerlink" title="Java程序对类的使用方式："></a>Java程序对类的使用方式：</h5><p>主动使用：</p>
+<ol>
+<li>创建类的实例</li>
+<li>访问某个类或接口的静态变量，或者对该静态变量赋值</li>
+<li>调用类的静态方法</li>
+<li>反射（比如：Class.forName(“fit.hanyu”)）</li>
+<li>初始化一个类的字类</li>
+<li>Java虚拟机启动时，被标明为启动类的类</li>
+<li>JDK7开始提供的动态语言支持: java.lang.invoke.MethodHandle实例的解析结果REF_getStatic、REF_putStatic、REF_invokeStatic句柄对应的类没有初始化，则初始化</li>
+</ol>
+<p>被动使用：</p>
+<p>除了主动使用，其他Java类的使用方式都是被动使用，被动使用不会导致类的初始化</p>
+
+    
+
+    
+    <div class="page-reward">
+      <a href="javascript:void(0);" class="page-reward-btn tooltip-top" target="_self">
+        <div class="tooltip tooltip-east">
+          <span class="tooltip-item">
+            赏
+          </span>
+          <span class="tooltip-content">
+            <span class="tooltip-text">
+              <span class="tooltip-inner">
+                <p class="reward-p"><i class="icon icon-quo-left"></i>谢谢你请我吃糖果<i
+                    class="icon icon-quo-right"></i></p>
+                <div class="reward-box">
+                  
+                  <div class="reward-box-item">
+                    <img class="reward-img" src="/img/alipay.jpg">
+                    <span class="reward-type">支付宝</span>
+                  </div>
+                  
+                  
+                  <div class="reward-box-item">
+                    <img class="reward-img" src="/img/weixin.png">
+                    <span class="reward-type">微信</span>
+                  </div>
+                  
+                </div>
+              </span>
+            </span>
+          </span>
         </div>
-    	 
-  
-    <h1 itemprop="name">
-	
-	  <a class="archive-article-title" href="/2021/06/22/Java---%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%AD%90%E7%B3%BB%E7%BB%9F/" target="_blank">Java---类加载子系统</a>
-  
-    </h1>
-  
+      </a>
+    </div>
+    
 
-
-        <div class="article-info info-on-right">
+    
+    <div class="declare"> 
+      <ul class="post-copyright">
+        <li>
+          <strong>本文作者：</strong>
+          Han yu
+        </li>
+        <li>
+          <strong>本文链接：</strong>
+          <a href="https://a956551943.github.io/2021/06/22/Java---类加载子系统/" title="Java---类加载子系统" target="_blank">https://a956551943.github.io/2021/06/22/Java---类加载子系统/</a>
+        </li>
+        
+        <li>
+          <strong>版权声明： </strong>
           
+          本博客所有文章除特别声明外，均采用 <a href="https://github.com/JoeyBling/hexo-theme-yilia-plus/blob/master/LICENSE" rel="external nofollow" target="_blank">MIT</a> 许可协议。转载请注明出处！
+        </li>
+        
+      </ul>
+    </div>
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
@@ -266,7 +533,7 @@
 		</ul>
 	</div>
 
-          
+    
 	<div class="article-category tagcloud">
 		<i class="icon-book icon"></i>
 		<ul class="article-tag-list">
@@ -279,71 +546,105 @@
 	</div>
 
 
+    
+
+    
+    
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <!-- <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a> -->
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+     <!-- <img src="//pan.baidu.com/share/qrcode?url=https://a956551943.github.io/2021/06/22/Java---%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%AD%90%E7%B3%BB%E7%BB%9F/" alt="微信分享二维码"> -->
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+
+    
+    <div class="clearfix"></div>
+  </div>
   </div>
 </article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	
-<a href="/2021/06/21/Java---JVM%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/" class="archive-article-date">
-        <time datetime="2021-06-21T03:29:33.641Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-06-21</time>
-</a>
 
+
+<nav id="article-nav">
+  
+  
+    <a href="/2021/06/21/Java---JVM%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">Java---JVM体系结构</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
         </div>
-    	 
-  
-    <h1 itemprop="name">
-	
-	  <a class="archive-article-title" href="/2021/06/21/Java---JVM%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/" target="_blank">Java---JVM体系结构</a>
-  
-    </h1>
-  
+        
+        
+    </div>
+</aside>
 
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">Java</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/Java//" class="article-tag-list-link color5">Java</a>
-        		</li>
-      		
-		</ul>
-	</div>
 
 
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-  
-    </div></section>
-  
 
-    
+
+
+
+
+
+
+
 
 
           </div>
@@ -384,9 +685,9 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
+		isPost: true,
 		isArchive: false,
-		isTag: true,
+		isTag: false,
 		isCategory: false,
 		open_in_new: true,
 		toc_hide_index: true,
