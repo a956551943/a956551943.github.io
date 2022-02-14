@@ -6,20 +6,27 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="https://a956551943.github.io">
-  <title>Archives: 2021/6 | Hanyu bolg</title>
+  <title>Java---运行时数据区与线程 | Hanyu bolg</title>
   <meta name="generator" content="hexo-theme-yilia-plus">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   
-  <meta name="description" content="record everything for life">
-<meta property="og:type" content="website">
-<meta property="og:title" content="Hanyu bolg">
-<meta property="og:url" content="https://a956551943.github.io/archives/2021/06/page/2/index.html">
+  <meta name="description" content="JVM内存分布:内存是非常重要的系统资源，是硬盘和CPU的中间仓库和桥梁，承载着操作系统和应用程序的实时运行。JVM内存布局规定了Java在运行过程中内存申请、分配、管理的策略，保证了JVM的高效稳定运行。不同的JVM对内存的划分方式和管理机制存在着部分差异。结合JVM虚拟机规范，来探讨一下经典的JVM内存布局。  Java虚拟机定义了若干种程序运行期间会用到的运行时数据区，其中有一些会随着虚拟机">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java---运行时数据区与线程">
+<meta property="og:url" content="https://a956551943.github.io/2021/06/24/Java---%E8%BF%90%E8%A1%8C%E6%97%B6%E6%95%B0%E6%8D%AE%E5%8C%BA%E4%B8%8E%E7%BA%BF%E7%A8%8B/index.html">
 <meta property="og:site_name" content="Hanyu bolg">
-<meta property="og:description" content="record everything for life">
+<meta property="og:description" content="JVM内存分布:内存是非常重要的系统资源，是硬盘和CPU的中间仓库和桥梁，承载着操作系统和应用程序的实时运行。JVM内存布局规定了Java在运行过程中内存申请、分配、管理的策略，保证了JVM的高效稳定运行。不同的JVM对内存的划分方式和管理机制存在着部分差异。结合JVM虚拟机规范，来探讨一下经典的JVM内存布局。  Java虚拟机定义了若干种程序运行期间会用到的运行时数据区，其中有一些会随着虚拟机">
 <meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://47.98.49.10/img/typora_img/JVM%E6%9E%B6%E6%9E%84%E6%A8%A1%E5%9E%8B-%E8%BF%90%E8%A1%8C%E6%97%B6%E6%95%B0%E6%8D%AE%E5%8C%BA-4348381.png">
+<meta property="og:image" content="http://47.98.49.10/img/typora_img/HotSpot%E6%A8%A1%E5%9E%8B-%E8%BF%90%E8%A1%8C%E6%97%B6%E6%95%B0%E6%8D%AE%E5%8C%BA.png">
+<meta property="og:image" content="http://47.98.49.10/img/typora_img/JVM%E6%A8%A1%E5%9E%8B-%E7%A8%8B%E5%BA%8F%E8%AE%A1%E6%95%B0%E5%99%A8.png">
+<meta property="og:image" content="http://47.98.49.10/img/typora_img/%E6%A0%88%E5%B8%A7%E5%86%85%E9%83%A8%E7%BB%93%E6%9E%84%E5%9B%BE.png">
+<meta property="article:published_time" content="2021-06-24T03:31:18.276Z">
+<meta property="article:modified_time" content="2021-06-24T03:31:18.276Z">
 <meta property="article:author" content="Han yu">
-<meta property="article:tag" content="计算机,算法,Java">
+<meta property="article:tag" content="Java">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://47.98.49.10/img/typora_img/JVM%E6%9E%B6%E6%9E%84%E6%A8%A1%E5%9E%8B-%E8%BF%90%E8%A1%8C%E6%97%B6%E6%95%B0%E6%8D%AE%E5%8C%BA-4348381.png">
   
     <link rel="alternative" href="/atom.xml" title="Hanyu bolg" type="application/atom+xml">
   
@@ -220,134 +227,357 @@
               class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-  
+            <article id="post-Java---运行时数据区与线程" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
     
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2021" class="archive-year">2021</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	
-<a href="/2021/06/17/%E8%AE%B0%20---%20%E5%85%B3%E4%BA%8E%E8%BF%91%E6%AE%B5%E6%97%B6%E9%97%B4%E5%AD%A6%E4%B9%A0%E7%9A%84%E6%80%BB%E7%BB%93(Hexo%E5%BB%BA%E7%AB%99%20--%20%E8%BF%9B%E9%98%B6%E7%AF%87-%E4%B8%AA%E6%80%A7%E5%8C%96%E9%85%8D%E7%BD%AE)/" class="archive-article-date">
-        <time datetime="2021-06-17T07:34:47.132Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-06-17</time>
-</a>
-
-        </div>
-    	 
+      <header class="article-header">
   
-    <h1 itemprop="name">
-	
-	  <a class="archive-article-title" href="/2021/06/17/%E8%AE%B0%20---%20%E5%85%B3%E4%BA%8E%E8%BF%91%E6%AE%B5%E6%97%B6%E9%97%B4%E5%AD%A6%E4%B9%A0%E7%9A%84%E6%80%BB%E7%BB%93(Hexo%E5%BB%BA%E7%AB%99%20--%20%E8%BF%9B%E9%98%B6%E7%AF%87-%E4%B8%AA%E6%80%A7%E5%8C%96%E9%85%8D%E7%BD%AE)/" target="_blank">Hexo建站进阶篇</a>
   
+    <h1 class="article-title" itemprop="name">
+      Java---运行时数据区与线程
     </h1>
   
 
 
-        <div class="article-info info-on-right">
+  
+  
+        
+        <span id="busuanzi_container_page_pv" style='display:none' class="archive-article-date">
+              <i class="icon-smile icon"></i> 阅读数：<span id="busuanzi_value_page_pv"></span>次
+        </span>
+
+<a href="/2021/06/24/Java---%E8%BF%90%E8%A1%8C%E6%97%B6%E6%95%B0%E6%8D%AE%E5%8C%BA%E4%B8%8E%E7%BA%BF%E7%A8%8B/" class="archive-article-date">
+        <time datetime="2021-06-24T03:31:18.276Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-06-24</time>
+</a>
+
+  
+  
+    
+<div style="margin-top:10px;">
+  <span class="post-time">
+    <span class="post-meta-item-icon">
+      <!-- fonts.scss -->
+      <!-- 百度字体平台:http://fontstore.baidu.com/static/editor/index.html -->
+      <i class="icon-statistics"></i>
+      <span class="post-meta-item-text"> 字数统计:</span>
+      <span class="post-count">3.6k字</span>
+    </span>
+  </span>
+
+  <span class="post-time">
+    &nbsp; | &nbsp;
+    <span class="post-meta-item-icon">
+      <i class="icon-book icon"></i>
+      <span class="post-meta-item-text"> 阅读时长≈</span>
+      <span class="post-count">12分</span>
+    </span>
+  </span>
+</div>
+
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h5 id="JVM内存分布"><a href="#JVM内存分布" class="headerlink" title="JVM内存分布:"></a>JVM内存分布:</h5><p>内存是非常重要的系统资源，是硬盘和CPU的中间仓库和桥梁，承载着操作系统和应用程序的实时运行。JVM内存布局规定了Java在运行过程中内存申请、分配、管理的策略，保证了JVM的高效稳定运行。不同的JVM对内存的划分方式和管理机制存在着部分差异。结合JVM虚拟机规范，来探讨一下经典的JVM内存布局。</p>
+<p><img src="http://47.98.49.10/img/typora_img/JVM%E6%9E%B6%E6%9E%84%E6%A8%A1%E5%9E%8B-%E8%BF%90%E8%A1%8C%E6%97%B6%E6%95%B0%E6%8D%AE%E5%8C%BA-4348381.png" alt="JVM架构模型-运行时数据区"></p>
+<p>Java虚拟机定义了若干种程序运行期间会用到的运行时数据区，其中有一些会随着虚拟机启动而创建，随着虚拟机退出而销毁。另外一些则是与线程一一对应的，这些与线程对应的数据区会随着线程的开始和结束而创建和销毁。</p>
+<p>灰色的为单独线程私有的，红色的为多个线程共享的，即：</p>
+<p>线程私有：栈、程序计数器、本地方法栈</p>
+<p>线程共享：堆、堆外内存也可称方法区(永久代或元空间、JIT代码缓存等)</p>
+<p><img src="http://47.98.49.10/img/typora_img/HotSpot%E6%A8%A1%E5%9E%8B-%E8%BF%90%E8%A1%8C%E6%97%B6%E6%95%B0%E6%8D%AE%E5%8C%BA.png" alt="HotSpot模型-运行时数据区"></p>
+<p>JRockit和J9没有图中的方法区</p>
+<h5 id="线程"><a href="#线程" class="headerlink" title="线程:"></a>线程:</h5><p>线程是一个程序里的运行单元。JVM允许一个应用有多个线程并行执行。</p>
+<p>在HotSpot VM里，每个线程都与操作系统的本地线程直接映射。当一个Java线程准备好执行以后，此时一个操作系统的本地线程也会同时创建。Java线程执行终止后，本地线程也会回收。</p>
+<p>操作系统负责所有线程的安排调度到一个可用的CPU上，一旦本地线程初始化成功，CPU就会(随机)调用Java线程中的run()方法</p>
+<p>如果你使用jconsole或者是任何一个调试工具，都能看到在后台有许多线程在运行。这些后台线程不包括调用public static void main(String[] args)的main线程以及所有这个main线程自己创建的线程。</p>
+<p>这些主要的后台系统线程在HotSpot VM里主要是以下几个：</p>
+<ol>
+<li>虚拟机线程：这种线程的操作是需要JVM到达安全点才会出现。这些操作必须在不同线程中发生的原因是他们都需要JVM达到安全点，这样堆才不会变化。这种线程的执行类型包括”stop-the-world”的垃圾收集，线程栈收集，线程挂起以及偏向所撤销。</li>
+<li>周期性任务线程：这种线程是时间周期事件的体现(比如中断),它们一般用于周期性操作的调度执行。</li>
+<li>GC线程：这种线程对JVM里不同种类的垃圾收集行为提供了支持。</li>
+<li>编译线程：这种线程在运行时会将字节码编译成本地代码(机器指令)。</li>
+<li>信号调度线程：这种线程接收信号并发送给JVM，在它内部通过调用适当的方法进行处理。</li>
+</ol>
+<h5 id="程序计数器-PC寄存器、PC-Register"><a href="#程序计数器-PC寄存器、PC-Register" class="headerlink" title="程序计数器(PC寄存器、PC Register)"></a>程序计数器(PC寄存器、PC Register)</h5><p>Java中的程序计数器(Program Counter Register),Register的命名起源于CPU的寄存器，寄存器存储指令相关的线程信息，CPU只有把数据装载到寄存器才能够运行。</p>
+<p>这里，并非是广义上所指的物理寄存器，或将其翻译成PC计数器(或指令计数器)会更加贴切(也称为程序钩子)，并且也不容易引起一些不必要的误会。JVM中的PC寄存器是对物理的PC寄存器的一种抽象模拟。</p>
+<p>作用：用来存储指向下一条指令的地址也即将要执行的指令代码，由执行引擎读取下一条指令。</p>
+<p><img src="http://47.98.49.10/img/typora_img/JVM%E6%A8%A1%E5%9E%8B-%E7%A8%8B%E5%BA%8F%E8%AE%A1%E6%95%B0%E5%99%A8.png" alt="JVM模型-程序计数器"></p>
+<p>它是一块很小的内存空间，几乎可以忽略不计。也是运行速度最快的存储区域。</p>
+<p>JVM规范中，每个线程都有它自己的程序计数器，是线程私有的，生命周期与线程的生命周期保持一致。</p>
+<p>任何时间一个线程都只有一个方法在执行，也就是所谓的当前方法。程序计数器会存储当前线程正在执行的Java方法的JVM指令地址：或者，如果是在执行native方法的话，则是未指定值 — 因为本地方法的指令地址不在JVM的运行时数据区内。</p>
+<p>它是程序控制流的指示器，分支、循环、跳转、异常处理、线程恢复等基础功能都需要这个程序计数器来完成。</p>
+<p>字节码解释器的工作就是通过改变这个计数器的值来选取下一条需要执行的字节码指令。</p>
+<p>他是唯一一个在Java虚拟机规范中没有规定任何OutOfMemoryError情况的区域。</p>
+<h5 id="PC寄存器问题："><a href="#PC寄存器问题：" class="headerlink" title="PC寄存器问题："></a>PC寄存器问题：</h5><p>使用PC寄存器存储字节码指令地址有什么用呢？为什么使用PC寄存器记录当前线程的执行地址呢？</p>
+<p>因为CPU需要不停的切换各个线程，切换回来以后，得需要知道接着从哪开始往下执行。</p>
+<p>JVM字节码解释器就需要通过改变PC寄存器的值来明确下一条应该执行什么样的字节码指令。</p>
+<p>PC寄存器为什么会被设定为线程私有？</p>
+<p>我们都知道所谓的多线程在一个特定的时间段内只会执行其中某一个线程的方法，CPU会不停的做任务切换，这样必然导致经常中断或恢复，如何保证分毫不差呢？为了能够准确的记录各个线程正在执行的当前字节码指令地址，最好的办法自然是为每一个线程都分配一个PC寄存器，这样一来各个线程之间便可以进行独立计算，从而不会出现相互干扰的情况。</p>
+<p>由于时间片轮限制，众多线程在并发执行过程中，任何一个确定的时刻，一个处理器或多核处理器中的一个内核，只会执行某个线程中的一条指令。这样必然导致经常中断和恢复，如何保证分毫不差？每个线程创建后，都会产生自己的程序计数器和栈帧，程序计数器在各个线程之间互不影响。</p>
+<h6 id="时间片概念："><a href="#时间片概念：" class="headerlink" title="时间片概念："></a>时间片概念：</h6><p>CPU时间片即CPU分配给各个程序的时间，每个线程被分配一个时间段，称作它的时间片。</p>
+<p>在宏观上：我们可以同时打开多个应用程序，每个程序并行不悖，同时运行。</p>
+<p>但在微观上：由于只有一个CPU，一次只能处理程序要求的一部分，如何处理公平，一种方法就是引入时间片，每个程序轮流执行。</p>
+<h5 id="虚拟机栈："><a href="#虚拟机栈：" class="headerlink" title="虚拟机栈："></a>虚拟机栈：</h5><p>由于跨平台性的设计，Java的指令都是根据栈来设计的，不同平台CPU架构不同，所以不能设计为基于寄存器的。</p>
+<p>优点是跨平台，指令集小，编译器容易实现，缺点是性能下降，实现同样的功能需要更多的指令。</p>
+<p>栈是运行时单位，堆是存储单位: 栈解决程序的运行问题，即程序如何执行，如何处理数据。堆解决数据存储问题，数据怎么放，放哪。</p>
+<h6 id="栈的基本内容："><a href="#栈的基本内容：" class="headerlink" title="栈的基本内容："></a>栈的基本内容：</h6><p>Java虚拟机栈是什么？</p>
+<p>Java虚拟机栈(Java Virtual Machine Stack)，早期也叫Java栈。每个线程在创建时都会创建一个虚拟机栈，其内部保存一个个栈帧(Stack Frame)，对应着一次次的Java方法调用。</p>
+<p>生命周期：</p>
+<p>和线程生命周期一致</p>
+<p>作用：</p>
+<p>主管Java程序的运行，它保存方法的局部变量(8种基本数据类型、对象的引用地址)、部分结果、并参与方法的调用与返回。</p>
+<p>特点(优点)：</p>
+<p>栈是一种快速有效的分配存储方式，访问速度仅次于程序计数器</p>
+<p>JVM直接对Java栈的操作只有两个：1、每个方法的执行伴随着压栈，2 、执行结束后的出栈。</p>
+<p>对于栈来说不存在垃圾回收问题。</p>
+<h6 id="栈中可能出现的异常："><a href="#栈中可能出现的异常：" class="headerlink" title="栈中可能出现的异常："></a>栈中可能出现的异常：</h6><p>Java虚拟机规范允许Java栈的大小是动态的或者是固定不变的。</p>
+<ol>
+<li>如果采用固定大小的Java虚拟机栈，那每一个线程的Java虚拟机栈容量可以在线程创建的时间独立选定。如果线程请求分配的虚拟机栈容量超过Java虚拟机栈允许的最大容量，Java虚拟机将会抛出一个StackOverflowError异常。</li>
+<li>如果Java虚拟机栈可以动态扩展(JVM并未实现该方法)，并且在尝试扩展的时候无法申请到足够的内存，或者在创建新的线程时没有足够的内存去创建对应的虚拟机栈，那Java虚拟机会抛出一个OutOfMemoryError异常。</li>
+</ol>
+<p>设置栈内存大小:</p>
+<p>可以使用-Xss参数来设置线程的最大栈空间，默认是1024k，栈的大小直接决定了函数调用的最大可达深度。</p>
+<h6 id="栈中存储着什么？"><a href="#栈中存储着什么？" class="headerlink" title="栈中存储着什么？"></a>栈中存储着什么？</h6><ol>
+<li><p>每个线程都有自己栈，栈中的数据都是以栈帧(Stack Frame)的格式存在的。</p>
+</li>
+<li><p>在线程上执行的每个方法都各自对应着一个栈帧(Stack Frame)。</p>
+</li>
+<li><p>栈帧是一个内存区域，是一个数据集，维系着方法执行过程中的各种数据信息。</p>
+</li>
+<li><p>JVM对Java栈的操作只有两个，就是对栈帧的压栈和出栈，遵循”先进后出，后进先出”的原则。</p>
+</li>
+<li><p>在一条活动线程中，一个时间点上，只会有一个活动的栈帧。即只有当前正在执行的方法的栈帧(顶上栈帧)是有效的，这个栈帧被称为当前栈帧(Current Frame)，与当前栈帧相对应的方法就是当前方法(Current Method)，定义这个方法的类就是当前类(Current Class)。</p>
+</li>
+<li><p>执行引擎运行的所有字节码指令只针对当前栈帧进行操作。</p>
+</li>
+<li><p>如果在一个方法中调用了其他方法，那么对应新的栈帧会被创建出来，放在栈的顶端，成为新的当前帧。</p>
+</li>
+<li><p>不同的线程中所包含的栈帧是不允许相互引用的，即不可能在一个栈帧中引用另一个线程的栈帧。</p>
+</li>
+<li><p>如果当前方法调用了其他方法，方法返回之际，当前栈帧会传回此方法的执行结果给前一个栈帧(当前方法对应栈帧)，接着虚拟机会丢弃当前栈帧，使得前一个栈帧成为顶上栈帧(当前方法栈帧)。</p>
+</li>
+<li><p>Java有两种返回函数的方式，一种是正常的函数返回，使用return指令；另一种是抛出异常，不管使用哪种方式，都会导致栈帧弹出</p>
+</li>
+</ol>
+<h6 id="栈帧的内部结构："><a href="#栈帧的内部结构：" class="headerlink" title="栈帧的内部结构："></a>栈帧的内部结构：</h6><p><img src="http://47.98.49.10/img/typora_img/%E6%A0%88%E5%B8%A7%E5%86%85%E9%83%A8%E7%BB%93%E6%9E%84%E5%9B%BE.png" alt="栈帧内部结构图"></p>
+<p>每个栈帧都有： </p>
+<p>局部变量表(Local Variables 即 LV)</p>
+<p>操作数栈或表达式栈(Operand Stack 即 OS)、</p>
+<p>动态链接(Dynamic Linking) （指向运行时常量池的方法引用）</p>
+<p>方法返回地址(Return Addreaa) (方法正常退出或异常退出的定义)</p>
+<p>一些附加信息…</p>
+<p>局部变量表(Local Variables):</p>
+<ol>
+<li><p>局部变量表也称为局部变量数组或本地变量表</p>
+</li>
+<li><p>定义为一个数字数组，主要用于存储方法参数和定义在方法体内的局部变量，这些数据类型包括各类基本数据类型、对象引用(reference),以及return address类型。</p>
+</li>
+<li><p>由于局部变量表是建立在线程的栈上，是线程私有数据，因此不存在数据安全问题。</p>
+</li>
+<li><p>局部变量表所需的内存容量大小是在编译期确定下来的，并保存在方法的code属性的maximum local variables数据项中，在方法运行期间是不会改变局部变量表的大小的。</p>
+</li>
+<li><p>方法嵌套调用的次数由栈的大小决定。一般来说，栈越大，方法嵌套调用次数越多。对一个函数而言，它的参数和局部变量越多，使得局部变量表膨胀，它的栈帧就越大，以满足方法调用所需传递的信息增大的需求。进而函数调用就会占用更多的栈空间，导致其嵌套调用次数就会减少。</p>
+</li>
+<li><p>局部变量表中的变量只在当前方法调用中有效。在方法执行时，虚拟机通过使用局部变量表完成参数值到参数变量列表的传递过程。当方法调用结束后，随着方法栈帧的销毁，局部变量表也会随之销毁。</p>
+</li>
+</ol>
+<p>Slot：局部变量表的基本存储单位</p>
+<p>参数值的存放总是在局部变量数组的index0开始，到数组长度-1的索引结束。</p>
+<p>局部变量表中存放编译器可知的各种基本数据类型(8种)，引用类型(Reference)，returnAddress类型的变量。</p>
+<p>在局部变量表里，32位以内的类型只占用一个slot(包括returnAddress类型)，64位的类型(long和double)占用两个slot。</p>
+<p>Byte、short、char在存储前被转换为int，boolean也被转换为int，0表示false，非0表示true</p>
+<p>JVM会为局部变量表中的每一个slot都分配一个访问索引，通过这个索引即可成功访问到局部变量表中指定的局部变量</p>
+<p>当一个实例方法被调用的时候，它的方法参数和方法体内部定义的局部变量会按照顺序被复制到局部变量表中的每一个slot上</p>
+<p>如果需要访问局部变量表中的一个64bit的局部变量时，只需使用前一个索引即可。(例如long、double变量)</p>
+<p>如果当前帧是由构造方法或者实例方法创建的，那么该对象的引用this将会放在局部变量数组index为0的slot处，其余的参数按照参数表顺序继续排列。</p>
+
+    
+
+    
+    <div class="page-reward">
+      <a href="javascript:void(0);" class="page-reward-btn tooltip-top" target="_self">
+        <div class="tooltip tooltip-east">
+          <span class="tooltip-item">
+            赏
+          </span>
+          <span class="tooltip-content">
+            <span class="tooltip-text">
+              <span class="tooltip-inner">
+                <p class="reward-p"><i class="icon icon-quo-left"></i>谢谢你请我吃糖果<i
+                    class="icon icon-quo-right"></i></p>
+                <div class="reward-box">
+                  
+                  <div class="reward-box-item">
+                    <img class="reward-img" src="/img/alipay.jpg">
+                    <span class="reward-type">支付宝</span>
+                  </div>
+                  
+                  
+                  <div class="reward-box-item">
+                    <img class="reward-img" src="/img/weixin.png">
+                    <span class="reward-type">微信</span>
+                  </div>
+                  
+                </div>
+              </span>
+            </span>
+          </span>
+        </div>
+      </a>
+    </div>
+    
+
+    
+    <div class="declare"> 
+      <ul class="post-copyright">
+        <li>
+          <strong>本文作者：</strong>
+          Han yu
+        </li>
+        <li>
+          <strong>本文链接：</strong>
+          <a href="https://a956551943.github.io/2021/06/24/Java---运行时数据区与线程/" title="Java---运行时数据区与线程" target="_blank">https://a956551943.github.io/2021/06/24/Java---运行时数据区与线程/</a>
+        </li>
+        
+        <li>
+          <strong>版权声明： </strong>
           
+          本博客所有文章除特别声明外，均采用 <a href="https://github.com/JoeyBling/hexo-theme-yilia-plus/blob/master/LICENSE" rel="external nofollow" target="_blank">MIT</a> 许可协议。转载请注明出处！
+        </li>
+        
+      </ul>
+    </div>
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">Hexo</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">Java</a>
         		</li>
       		
 		</ul>
 	</div>
 
-          
+    
 	<div class="article-category tagcloud">
 		<i class="icon-book icon"></i>
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="/categories/Hexo//" class="article-tag-list-link color5">Hexo</a>
+        			<a href="/categories/Java//" class="article-tag-list-link color5">Java</a>
         		</li>
       		
 		</ul>
 	</div>
 
 
+    
+
+    
+    
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <!-- <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a> -->
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+     <!-- <img src="//pan.baidu.com/share/qrcode?url=https://a956551943.github.io/2021/06/24/Java---%E8%BF%90%E8%A1%8C%E6%97%B6%E6%95%B0%E6%8D%AE%E5%8C%BA%E4%B8%8E%E7%BA%BF%E7%A8%8B/" alt="微信分享二维码"> -->
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+
+    
+    <div class="clearfix"></div>
+  </div>
   </div>
 </article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	
-<a href="/2021/06/17/%E8%AE%B0%20---%20%E5%85%B3%E4%BA%8E%E8%BF%91%E6%AE%B5%E6%97%B6%E9%97%B4%E5%AD%A6%E4%B9%A0%E7%9A%84%E6%80%BB%E7%BB%93(Hexo%E5%BB%BA%E7%AB%99%20--%20%E5%9F%BA%E7%A1%80%E7%AF%87-%E6%90%AD%E5%BB%BA%E7%8E%AF%E5%A2%83)/" class="archive-article-date">
-        <time datetime="2021-06-17T07:34:47.108Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-06-17</time>
-</a>
 
+
+<nav id="article-nav">
+  
+  
+    <a href="/2021/06/22/Java---%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%AD%90%E7%B3%BB%E7%BB%9F/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">Java---类加载子系统</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
         </div>
-    	 
-  
-    <h1 itemprop="name">
-	
-	  <a class="archive-article-title" href="/2021/06/17/%E8%AE%B0%20---%20%E5%85%B3%E4%BA%8E%E8%BF%91%E6%AE%B5%E6%97%B6%E9%97%B4%E5%AD%A6%E4%B9%A0%E7%9A%84%E6%80%BB%E7%BB%93(Hexo%E5%BB%BA%E7%AB%99%20--%20%E5%9F%BA%E7%A1%80%E7%AF%87-%E6%90%AD%E5%BB%BA%E7%8E%AF%E5%A2%83)/" target="_blank">Hexo建站基础篇</a>
-  
-    </h1>
-  
+        
+        
+    </div>
+</aside>
 
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">Hexo</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/Hexo//" class="article-tag-list-link color5">Hexo</a>
-        		</li>
-      		
-		</ul>
-	</div>
 
 
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-  
-    </div></section>
-  
 
-    
-    <nav id="page-nav">
-      <a class="extend prev" rel="prev" href="/archives/2021/06/">&amp;laquo; Prev</a><a class="page-number" href="/archives/2021/06/">1</a><span class="page-number current">2</span>
-    </nav>
-  
+
+
+
+
+
+
+
 
 
           </div>
@@ -389,8 +619,8 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
-		isArchive: true,
+		isPost: true,
+		isArchive: false,
 		isTag: false,
 		isCategory: false,
 		open_in_new: true,
